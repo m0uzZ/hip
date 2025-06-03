@@ -1,531 +1,406 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>患者康复信息互动系统</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google 字体和 Bootstrap 图标 -->
-  <link href="https://fonts.googleapis.com/css2?family=Source+Han+Sans+SC:wght@700;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>典型病例介绍</title>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.351.0/font/lucide.css">
   <style>
     :root {
-      --blue: #2979ff;
-      --cyan: #05c0d0;
-      --pink: #f26798;
-      --green: #4dd29c;
-      --yellow: #fbb23e;
-      --page-bg: #f5f8fa;
-      --card-bg: #fff;
-      --shadow: 0 8px 32px 0 rgba(60,110,255,0.09);
-      --border: #e5eaf2;
-      --nav-height: 74px;
-      --font-main: 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
-      --big-title: 28px;
-      --subtitle: 23px;
-      --body-font: 21px;
-      --sm-font: 19px;
+      --primary: #2574A9;
+      --secondary: #44B39D;
+      --accent: #FFB74D;
+      --bg: #F8FAFB;
+      --card: #FFF;
+      --text-main: #212121;
+      --text-sub: #607D8B;
+      --shadow: 0 4px 24px 0 rgba(37,116,169,0.05);
+      --radius: 18px;
     }
-    body {
+    * { box-sizing: border-box; }
+    html, body {
       margin: 0;
-      background: var(--page-bg);
-      font-family: var(--font-main);
-      color: #18254c;
-      font-size: var(--body-font);
-      min-height: 100vh;
-      padding-bottom: 70px;
+      padding: 0;
+      font-family: 'Source Sans Pro', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
     }
+    /* 顶部导航栏 */
     .navbar {
       display: flex;
       align-items: center;
-      background: linear-gradient(90deg, var(--blue), var(--cyan) 70%);
-      height: var(--nav-height);
-      box-shadow: 0 4px 24px 0 rgba(60,110,255,0.07);
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: #fff;
+      box-shadow: 0 2px 8px 0 rgba(37,116,169,0.06);
       position: sticky;
       top: 0;
-      z-index: 50;
-      padding: 0 5vw;
+      z-index: 20;
     }
-    .navbar-title {
-      font-size: var(--big-title);
-      color: #fff;
+    .navbar .logo {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg);
+      margin-right: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      color: var(--primary);
       font-weight: bold;
-      letter-spacing: 1px;
-      margin-right: 30px;
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-    }
-    .navbar-title .bi {
-      font-size: 1.7em;
-      margin-right: 13px;
-      color: #fff;
-    }
-    .nav-tabs {
-      display: flex;
-      flex: 1;
-      justify-content: flex-start;
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      outline: none;
-      color: #e6eefe;
-      font-size: 1.1em;
-      padding: 15px 27px;
-      margin: 0 8px;
-      cursor: pointer;
-      font-family: var(--font-main);
-      font-weight: 600;
-      border-bottom: 4px solid transparent;
-      transition: all 0.19s;
-      letter-spacing: 1px;
-      border-radius: 13px 13px 0 0;
-      position: relative;
-      z-index: 2;
-    }
-    .nav-btn.active {
-      color: #18254c;
-      background: #fff;
-      border-bottom: 5px solid var(--blue);
-      box-shadow: 0 8px 22px 0 rgba(60,110,255,0.12);
-    }
-    .nav-btn .bi {
-      margin-right: 7px;
-      font-size: 1.17em;
-      vertical-align: middle;
-    }
-    /* 每页顶色条 */
-    .page-header {
-      height: 9px;
-      border-radius: 18px 18px 0 0;
-      margin-bottom: 0;
-    }
-    .page-header.s1 {background: linear-gradient(90deg,var(--blue),var(--cyan));}
-    .page-header.s2 {background: linear-gradient(90deg,var(--pink),#fbebef);}
-    .page-header.s3 {background: linear-gradient(90deg,var(--green),var(--cyan));}
-    .page-header.s4 {background: linear-gradient(90deg,var(--yellow),#ffeeb2);}
-    /* 内容卡片 */
-    .page-card {
-      margin: 30px auto;
-      max-width: 970px;
-      background: var(--card-bg);
       box-shadow: var(--shadow);
-      border-radius: 23px;
-      padding: 40px 50px 40px 50px;
-      animation: fadein 0.75s cubic-bezier(.42,0,.58,1);
-      position: relative;
-      min-height: 330px;
     }
-    @keyframes fadein {
-      0% {opacity: 0;transform:translateY(40px);}
-      100% {opacity: 1;transform:translateY(0);}
-    }
-    .page-title {
-      font-size: var(--big-title);
+    .navbar .title {
+      color: var(--primary);
       font-weight: bold;
-      letter-spacing: 1px;
-      margin: 6px 0 22px 0;
-      color: var(--blue);
+      font-size: 1.28rem;
+      letter-spacing: 2px;
+      flex: 1;
+      text-align: center;
+    }
+    .navbar .back-btn {
       display: flex;
       align-items: center;
+      color: #b0b8c1;
+      background: #f2f3f6;
+      border: none;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      justify-content: center;
+      margin-right: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
     }
-    .page-title .bi {
-      margin-right: 15px;
-      font-size: 1.37em;
-      color: var(--cyan);
+    .navbar .back-btn:hover {
+      background: #e2e8f0;
     }
-    .tag {
-      display: inline-block;
-      padding: 2px 12px;
-      margin: 0 8px;
-      font-size: 0.85em;
-      border-radius: 8px;
-      background: #e7f4fe;
-      color: var(--blue);
-      font-weight: 600;
+    .navbar .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: url('https://randomuser.me/api/portraits/women/68.jpg') center/cover;
+      border: 2px solid #f1f1f1;
+      margin-left: 16px;
     }
-    .section {
-      margin-bottom: 23px;
+    .container {
+      max-width: 900px;
+      margin: 36px auto 86px auto;
+      padding: 0 12px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+      padding: 26px 22px 20px 22px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover {
+      box-shadow: 0 6px 32px 0 rgba(37,116,169,0.14);
+      transform: translateY(-2px) scale(1.012);
     }
     .section-title {
-      font-size: var(--subtitle);
-      color: var(--pink);
-      font-weight: 600;
-      margin-bottom: 7px;
-      margin-top: 23px;
+      display: flex; align-items: center;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.08rem;
+      margin-bottom: 12px;
       letter-spacing: 1px;
+      gap: 7px;
+    }
+    .section-title .icon {
+      font-size: 1.1rem;
+      color: var(--secondary);
+    }
+    .info-list {
       display: flex;
-      align-items: center;
-    }
-    .section-title .bi {
-      color: var(--pink);
-      margin-right: 10px;
-    }
-    ul, ol {
-      font-size: var(--body-font);
-      margin: 7px 0 10px 20px;
-      padding-left: 20px;
-    }
-    li {
+      flex-wrap: wrap;
+      gap: 16px 36px;
       margin-bottom: 10px;
     }
-    table {
+    .info-item {
+      min-width: 85px;
+      font-size: 1.02rem;
+      color: var(--text-main);
+      display: flex; align-items: center;
+      gap: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      font-size: 0.95em;
+      color: #fff;
+      border-radius: 14px;
+      background: var(--accent);
+      margin-left: 8px;
+      font-weight: 700;
+    }
+    .badge-blue {
+      background: var(--primary);
+    }
+    .badge-green {
+      background: var(--secondary);
+    }
+    .badge-orange {
+      background: var(--accent);
+    }
+    .info-label {
+      color: var(--text-sub);
+      font-size: 0.97em;
+      margin-right: 5px;
+    }
+    .data-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 15px 0 10px 0;
-      font-size: var(--sm-font);
-      background: #f7fbfd;
+      margin: 16px 0 0 0;
+      font-size: 1em;
+      background: #fafbfc;
       border-radius: 8px;
       overflow: hidden;
     }
-    th, td {
-      border: 1px solid var(--border);
-      padding: 12px 5px;
+    .data-table th, .data-table td {
+      border: none;
+      padding: 8px 7px;
       text-align: center;
     }
-    th {
-      background: #e5f1fd;
-      font-weight: 700;
-      color: var(--blue);
-      font-size: var(--sm-font);
+    .data-table th {
+      background: var(--bg);
+      color: var(--primary);
+      font-weight: bold;
     }
-    tr:nth-child(even) td {
-      background: #f0f6fa;
+    .data-table tr:nth-child(even) { background: #f5f7fa; }
+    .keypoint {
+      background: #ECF8F4;
+      border-left: 4px solid var(--secondary);
+      border-radius: 12px;
+      padding: 13px 20px;
+      margin-bottom: 13px;
+      font-size: 1.01em;
+      animation: fadeInKey 1.3s;
     }
-    .info-list b {
-      color: var(--blue);
-      font-weight: 600;
-      margin-right: 5px;
-      font-size: var(--sm-font);
+    @keyframes fadeInKey { from { opacity: 0;} to { opacity: 1;}}
+    .important {
+      color: var(--accent);
+      font-weight: bold;
+      animation: flashAcc 1.2s alternate infinite;
     }
-    .label-cyan {background:#d6f6ff;color:#20b8d8;}
-    .label-pink {background:#ffe1ef;color:var(--pink);}
-    .label-yellow {background:#fff6de;color:var(--yellow);}
-    .label-green {background:#d7fbe8;color:var(--green);}
-    /* 页面切换动画 */
-    .page-section {
-      display: none;
-      animation: fadein 0.8s cubic-bezier(.42,0,.58,1);
+    @keyframes flashAcc { 0%{color:var(--accent);} 70%{color:#FF9800;} 100%{color:var(--accent);} }
+    /* 图片与附件区 */
+    .img-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+      gap: 14px;
     }
-    .page-section.active {
-      display: block;
-    }
-    /* 底部和回顶 */
-    .footer {
-      text-align: center;
-      font-size: var(--sm-font);
-      color: #aaa;
-      margin: 20px 0 5px 0;
-    }
-    .backtop {
-      position: fixed;
-      bottom: 29px;
-      right: 28px;
-      background: var(--cyan);
-      color: #fff;
-      border-radius: 50%;
-      width: 55px;
-      height: 55px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .img-thumb {
+      border-radius: 11px;
+      overflow: hidden;
+      box-shadow: 0 1px 5px 0 rgba(68,179,157,0.09);
       cursor: pointer;
-      box-shadow: 0 4px 22px 0 rgba(5,192,208,0.18);
-      z-index: 90;
-      font-size: 2.6em;
-      transition: background .23s;
-      display: none;
+      background: #eef5fa;
+      transition: transform .15s, box-shadow .15s;
+      aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid transparent;
     }
-    .backtop:hover {
-      background: var(--pink);
+    .img-thumb:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px 0 rgba(37,116,169,0.10);
+      border-color: var(--primary);
     }
-    /* 手机端优化 */
-    @media (max-width: 900px) {
-      .page-card {padding: 22px 7vw;}
-      .navbar {padding: 0 2vw;}
+    /* 大图弹窗 */
+    .modal {
+      display: none; position: fixed; z-index: 30; left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(35,47,62,0.37);
+      align-items: center; justify-content: center;
+      animation: fadeIn .4s;
     }
+    @keyframes fadeIn {from {opacity: 0;} to {opacity: 1;}}
+    .modal.active { display: flex;}
+    .modal-img {
+      max-width: 88vw; max-height: 82vh; border-radius: 18px; box-shadow: var(--shadow);
+      animation: scaleIn .35s;
+      background: #fff;
+    }
+    @keyframes scaleIn { from {transform: scale(0.86);} to {transform: scale(1);}}
+    .modal-close {
+      position: absolute; top: 5vh; right: 6vw;
+      font-size: 2rem; color: #fff;
+      background: rgba(37,116,169,0.6); border: none;
+      border-radius: 50%; width: 44px; height: 44px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s;
+    }
+    .modal-close:hover { background: var(--primary);}
+    /* 底部操作栏 */
+    .footer-bar {
+      position: fixed; left: 0; bottom: 0; width: 100vw;
+      background: #fff; box-shadow: 0 -2px 16px 0 rgba(37,116,169,0.06);
+      display: flex; align-items: center; justify-content: center;
+      padding: 9px 0;
+      gap: 18px;
+      z-index: 25;
+    }
+    .footer-btn {
+      padding: 9px 22px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.04em;
+      font-weight: bold;
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 1px 8px 0 rgba(68,179,157,0.07);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: background .18s, transform .18s;
+    }
+    .footer-btn:hover { background: var(--secondary); transform: translateY(-2px);}
+    .footer-btn.print { background: var(--secondary);}
+    .footer-btn.share { background: var(--accent); color: #212121;}
     @media (max-width: 600px) {
-      .navbar-title {font-size: 1.03em;}
-      .nav-btn {font-size: 1em;padding: 9px 9px;}
-      .page-card {padding: 8vw 3vw;}
-      .page-title {font-size: 1.1em;}
-      .section-title {font-size: 1em;}
+      .container { margin-top: 13px; }
+      .card { padding: 13px 6px 13px 8px;}
+      .navbar .logo, .navbar .avatar { width: 32px; height: 32px;}
+      .footer-bar {gap: 7px;}
+      .footer-btn {padding: 8px 7px; font-size: .95em;}
+      .img-list { gap: 7px;}
     }
-    @media (max-width: 440px) {
-      .navbar-title {font-size: 0.91em;}
-      .nav-btn {padding: 8px 4px;}
-      .page-card {padding: 5vw 2vw;}
-    }
+    /* 可访问性 */
+    .footer-btn:focus, .back-btn:focus, .img-thumb:focus { outline: 2px solid var(--accent);}
   </style>
 </head>
 <body>
-  <!-- 导航栏 -->
-  <div class="navbar">
-    <div class="navbar-title">
-      <i class="bi bi-hospital"></i>
-      康复信息互动系统
-    </div>
-    <div class="nav-tabs" id="navTabs">
-      <button class="nav-btn active" data-page="s1"><i class="bi bi-person-lines-fill"></i>主观资料</button>
-      <button class="nav-btn" data-page="s2"><i class="bi bi-activity"></i>客观资料</button>
-      <button class="nav-btn" data-page="s3"><i class="bi bi-clipboard2-check"></i>评估</button>
-      <button class="nav-btn" data-page="s4"><i class="bi bi-journal-medical"></i>康复方案</button>
-    </div>
-  </div>
+  <!-- 顶部导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <button class="back-btn" aria-label="返回" onclick="history.back()">
+      <i class="lucide lucide-chevron-left"></i>
+    </button>
+    <div class="logo" title="医学病例"><i class="lucide lucide-stethoscope"></i></div>
+    <div class="title">典型病例介绍</div>
+    <div class="avatar" aria-label="用户头像"></div>
+  </nav>
 
-  <!-- 主观资料 -->
-  <div class="page-section active" id="page-s1">
-    <div class="page-header s1"></div>
-    <div class="page-card">
-      <div class="page-title"><i class="bi bi-person-lines-fill"></i>主观资料（S）</div>
-      <ul class="info-list">
-        <li><b>性别：</b>女性，74岁，退休在家 <span class="tag label-cyan">年龄</span></li>
-        <li><b>主诉：</b>髋关节置换近一个月恢复良好，伤口无疼痛，可独立行走，活动久后会有酸痛感。</li>
-        <li><b>现病史：</b>
-          <ul>
-            <li>1个月前因“右侧股骨颈骨折”行右侧全髋关节置换手术（后外侧入路），术后恢复顺利，切口愈合良好，无感染或渗液。</li>
-            <li>双下肢无麻木无肿胀，无夜间痛和晨僵，右膝久站或康复训练后酸痛。</li>
-          </ul>
-        </li>
-        <li><b>治疗史：</b>
-          <ul>
-            <li>术后前三天，床上康复训练（踝泵、直腿抬高、股四等长收缩）。</li>
-            <li>术后三天起下床，助行器辅助步行，练习单脚站、自主步行、站立位髋内收外展、膝关节屈伸。</li>
-            <li>右膝红外灯照射，右侧股四头肌低频电刺激。</li>
-          </ul>
-        </li>
-        <li><b>既往史：</b>
-          <ul>
-            <li>骨质疏松症10余年，腰椎间盘置换术史，左手尺骨鹰嘴骨折钢钉固定。</li>
-            <li>无高血压、糖尿病等慢病史，无长期吸烟饮酒。</li>
-          </ul>
-        </li>
-        <li><b>家族/个人史：</b>母亲骨质疏松，与子女同住，女儿陪护。</li>
-        <li><b>用药史：</b>阿仑膦酸钠、钙剂。</li>
-        <li><b>过敏史：</b>无药物或食物过敏。</li>
+  <main class="container" aria-label="病例详细内容">
+    <!-- 基础信息卡 -->
+    <section class="card" aria-label="基础信息">
+      <div class="section-title"><i class="lucide lucide-user"></i> 基础信息</div>
+      <div class="info-list">
+        <div class="info-item"><span class="info-label">性别</span> 女 <span class="badge badge-blue">F</span></div>
+        <div class="info-item"><span class="info-label">年龄</span> 74 <span class="badge badge-green">高龄</span></div>
+        <div class="info-item"><span class="info-label">职业</span> 退休在家</div>
+        <div class="info-item"><span class="info-label">就诊时间</span> 术后1个月</div>
+      </div>
+      <div class="info-item"><span class="info-label">主诉</span> 髋关节置换近一个月恢复良好，伤口无疼痛，可独立行走，活动久后有酸痛感</div>
+    </section>
+
+    <!-- 病例详情 -->
+    <section class="card" aria-label="病例详情">
+      <div class="section-title"><i class="lucide lucide-file-text"></i> 病例详情</div>
+      <ul style="margin: 0 0 12px 0; padding-left: 20px; color: var(--text-main); line-height:1.7;">
+        <li><b>现病史：</b>1个月前因“右侧股骨颈骨折”行右侧全髋关节置换手术（后外侧入路），术后恢复顺利，切口愈合良好，无感染或渗液。双下肢无麻木无肿胀，无夜间痛和晨僵，右膝久站或康复训练后酸痛。</li>
+        <li><b>治疗史：</b>术后前三天，进行床上康复训练（踝泵、直腿抬高、股四等长收缩）。术后三天下床，助行器辅助下步行。目前练习单脚站，自主步行，站立位髋内收外展，膝关节屈伸。右膝照红外灯，右侧股四头肌低频电。</li>
+        <li><b>既往史：</b>骨质疏松症10余年，腰椎间盘突出行腰椎间盘置换手术，左手尺骨鹰嘴骨折钢钉固定。否认高血压、糖尿病等慢病史。否认长期大量吸烟喝酒史。</li>
+        <li><b>家族/个人史：</b>母亲患骨质疏松，现与子女共居，女儿陪同照顾。</li>
+        <li><b>用药史：</b>口服阿仑膦酸钠+钙剂</li>
+        <li><b>过敏史：</b>否认药物、食物过敏史。</li>
       </ul>
-    </div>
-  </div>
-
-  <!-- 客观资料 -->
-  <div class="page-section" id="page-s2">
-    <div class="page-header s2"></div>
-    <div class="page-card">
-      <div class="page-title"><i class="bi bi-activity"></i>客观资料（O）</div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-thermometer-half"></i>生命体征</div>
-        <ul>
-          <li>心率（HR）：<b>86次/分</b></li>
-          <li>体温（T）：<b>36.7℃</b></li>
-        </ul>
-      </div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-scissors"></i>手术切口</div>
-        <ul>
-          <li>右侧髋部后外侧切口愈合佳，无红肿、压痛及渗出。</li>
-        </ul>
-      </div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-joystick"></i>关节主动活动度</div>
-        <table>
+      <div class="section-title" style="margin-top: 13px;"><i class="lucide lucide-activity"></i> 体格与辅助检查</div>
+      <div style="color:var(--text-sub);margin-bottom:8px;">生命体征：<b>HR</b> 86次/分，<b>T</b> 36.7℃</div>
+      <div>
+        <table class="data-table" aria-label="关节活动度对比">
           <tr>
-            <th>项目</th><th>患侧右髋</th><th>健侧左髋</th><th>参考正常</th>
+            <th></th><th>右侧主动ROM</th><th>左侧主动ROM</th><th>右侧被动ROM</th><th>左侧被动ROM</th>
           </tr>
-          <tr>
-            <td>屈髋</td><td>0–90°</td><td>0–113°</td><td>120°</td>
-          </tr>
-          <tr>
-            <td>伸髋</td><td>0–11°</td><td>0–18°</td><td>20°</td>
-          </tr>
-          <tr>
-            <td>外展</td><td>0–32°</td><td>0–40°</td><td>40°</td>
-          </tr>
-          <tr>
-            <td>内收</td><td>禁忌</td><td>0–23°</td><td>25°</td>
-          </tr>
-          <tr>
-            <td>内旋</td><td>禁忌</td><td>0–21°</td><td>30°</td>
-          </tr>
-          <tr>
-            <td>外旋</td><td>0–12°</td><td>0–37°</td><td>45°</td>
-          </tr>
+          <tr><td>屈髋</td><td>0-90°</td><td>0-113°</td><td>0-90°</td><td>0-122°</td></tr>
+          <tr><td>伸髋</td><td>0-11°</td><td>0-18°</td><td>0-15°</td><td>0-25°</td></tr>
+          <tr><td>外展</td><td>0-32°</td><td>0-40°</td><td>0-35°</td><td>0-43°</td></tr>
+          <tr><td>内收</td><td>—</td><td>0-23°</td><td>—</td><td>0-25°</td></tr>
+          <tr><td>内旋</td><td>—</td><td>0-21°</td><td>—</td><td>0-25°</td></tr>
+          <tr><td>外旋</td><td>0-12°</td><td>0-37°</td><td>0-30°</td><td>0-40°</td></tr>
         </table>
       </div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-bar-chart-line-fill"></i>肌力评估</div>
-        <table>
-          <tr>
-            <th>肌群</th><th>右侧</th><th>左侧</th><th>备注</th>
-          </tr>
-          <tr>
-            <td>屈髋</td><td>4级</td><td>4级</td><td>患侧稍弱</td>
-          </tr>
-          <tr>
-            <td>伸髋</td><td>4级</td><td>4级</td><td>术后限制</td>
-          </tr>
-          <tr>
-            <td>外展</td><td>3级</td><td>4级</td><td>术后相关肌群</td>
-          </tr>
-          <tr>
-            <td>内收</td><td>4级</td><td>4级</td><td>近正常</td>
-          </tr>
-          <tr>
-            <td>内旋</td><td>3级</td><td>4级</td><td>患侧弱</td>
-          </tr>
-          <tr>
-            <td>外旋</td><td>3级</td><td>3级</td><td>均弱</td>
-          </tr>
-          <tr>
-            <td>屈膝</td><td>4级</td><td>4级</td><td>正常</td>
-          </tr>
-          <tr>
-            <td>伸膝</td><td>4级</td><td>4级</td><td>患侧不适</td>
-          </tr>
-        </table>
+      <div style="margin-top:10px;">
+        <span class="info-label">肌力：</span>
+        <span style="color:var(--secondary);font-weight:700;">患侧髋外展、内旋肌力弱</span>
       </div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-person-walking"></i>姿态与步态</div>
-        <ul>
-          <li>驼背、头前倾、膝过伸、骨盆前倾。</li>
-          <li>助行器辅助步行，步幅小，患侧支撑时间短，足尖着地。</li>
-        </ul>
-      </div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-shuffle"></i>平衡能力</div>
-        <ul>
-          <li>左侧睁眼单脚站立 &lt; 1秒，右侧未测。</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+      <div class="info-label" style="margin-bottom: 2px;">步态：助行器辅助，步幅小，患侧支撑相稍短、足尖着地</div>
+      <div class="info-label" style="margin-bottom: 8px;">平衡：左侧单脚站<1秒，右侧拒做</div>
+    </section>
 
-  <!-- 评估 -->
-  <div class="page-section" id="page-s3">
-    <div class="page-header s3"></div>
-    <div class="page-card">
-      <div class="page-title"><i class="bi bi-clipboard2-check"></i>评估（A）</div>
-      <ul class="info-list">
-        <li><b>诊断：</b>
-          <span class="tag label-green">右侧全髋关节置换术后</span>
-          <span class="tag label-pink">骨质疏松</span>
-        </li>
-        <li><b>康复评估：</b>
+    <!-- 诊断与分析 -->
+    <section class="card" aria-label="诊断与分析">
+      <div class="section-title"><i class="lucide lucide-heart-pulse"></i> 诊断与分析</div>
+      <div class="info-list">
+        <div class="info-item">诊断<span class="badge badge-orange">右侧全髋关节置换术后恢复期</span></div>
+        <div class="info-item"><span class="badge badge-green">骨质疏松</span></div>
+      </div>
+      <div class="keypoint" style="margin-bottom:9px;">
+        康复评估：功能恢复良好，但患侧髋外展和内旋肌力明显较弱，患侧膝关节肌群肌耐力差，<b>双下肢平衡能力差</b>。
+      </div>
+      <div class="keypoint"><span class="important">风险因素：</span>骨折风险高，日常生活需注意禁忌症防脱位。</div>
+    </section>
+
+    <!-- 结论与建议 -->
+    <section class="card" aria-label="结论与建议">
+      <div class="section-title"><i class="lucide lucide-clipboard-check"></i> 诊疗建议与随访方案</div>
+      <ol style="color:var(--text-main); line-height:1.7; margin-bottom:7px;">
+        <li><b>4-8周恢复期：</b>
           <ul>
-            <li>功能恢复良好，但患侧髋外展/内旋肌力较弱。</li>
-            <li>患侧膝关节耐力差。</li>
-            <li>双下肢平衡能力差。</li>
+            <li>屈髋、内收ROM逐步恢复，提升髋外展外旋肌力，步态恢复至术后状态。</li>
+            <li>低频电/红外灯物理因子辅助，肌力训练与软组织松解，强调关节松动与瘢痕管理。</li>
+            <li>注意防脱位，康复活动范围严格限制。</li>
           </ul>
         </li>
-        <li><b>风险因素：</b>
-          <span class="tag label-yellow"><i class="bi bi-exclamation-circle"></i>骨折风险高</span>
-          康复期间注意防脱位及日常禁忌。
+        <li><b>8周-3月功能强化：</b>
+          <ul>
+            <li>生活能力恢复，上下台阶、单腿站立等训练，物理因子强化骨重塑。</li>
+            <li>日常模拟与康复宣教，重点预防跌倒和意外。</li>
+          </ul>
         </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- 康复方案 -->
-  <div class="page-section" id="page-s4">
-    <div class="page-header s4"></div>
-    <div class="page-card">
-      <div class="page-title"><i class="bi bi-journal-medical"></i>康复方案（P）</div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-hourglass-split"></i>阶段一：4–8周（恢复期）</div>
-        <ol>
-          <li><b>目标：</b>
-            <ul>
-              <li>屈髋、内收活动度逐步恢复（6周后放宽限制）。</li>
-              <li>提升髋外展/外旋肌力。</li>
-              <li>步态恢复至术后正常。</li>
-            </ul>
-          </li>
-          <li><b>物理因子：</b>
-            <ul>
-              <li>低频电：右股四头肌，20Hz，15分钟/次，1次/日。</li>
-              <li>红外灯：右膝局部，20分钟/次，1次/日。</li>
-            </ul>
-          </li>
-          <li><b>手法治疗：</b>
-            <ul>
-              <li>软组织松解：髋外展/内外旋肌群。</li>
-              <li>关节松动术：髋I–II级松动（仰卧前后滑动）。</li>
-              <li>瘢痕管理：术后6周后切口瘢痕松动。</li>
-            </ul>
-          </li>
-          <li><b>肌力训练：</b>
-            <ul>
-              <li>外展肌群：侧卧外展，自重到弹力带，10次×3组，2次/日。</li>
-              <li>臀桥训练。</li>
-              <li>股四头肌训练。</li>
-            </ul>
-          </li>
-          <li><b>步态训练：</b>助行器→单拐，足跟–足尖着地。</li>
-          <li><b>注意事项：</b>防脱位，遵守活动度限制。</li>
-        </ol>
+      </ol>
+      <div class="keypoint" style="background:#fff9f4;border-left:4px solid var(--accent);color:var(--accent);">
+        <i class="lucide lucide-alert-triangle" style="vertical-align:middle"></i> 温馨提示：避免急停急转，严格遵守医嘱，家庭环境需防滑防跌倒。
       </div>
-      <div class="section">
-        <div class="section-title"><i class="bi bi-trophy"></i>阶段二：8周–3个月（功能性强化）</div>
-        <ol>
-          <li><b>目标：</b>
-            <ul>
-              <li>日常能力恢复（上下台阶等）。</li>
-              <li>单腿站、起立-行走等达到同龄正常。</li>
-            </ul>
-          </li>
-          <li><b>物理因子：</b>
-            <ul>
-              <li>超声治疗、全身振动训练。</li>
-            </ul>
-          </li>
-          <li><b>功能训练：</b>
-            <ul>
-              <li>上下台阶、弓步、靠墙静蹲、单腿站立。</li>
-            </ul>
-          </li>
-          <li><b>日常模拟：</b>坐-站转移，穿衣、拾物（注意腰椎保护）。</li>
-          <li><b>康复宣教：</b>防跌倒、急转弯、布置家庭作业。</li>
-        </ol>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- 回到顶部 -->
-  <div class="backtop" id="backtopBtn" title="回到顶部">
-    <i class="bi bi-chevron-up"></i>
+    <!-- 图片与附件区 -->
+    <section class="card" aria-label="图片与附件">
+      <div class="section-title"><i class="lucide lucide-image"></i> 影像/化验单及附件</div>
+      <div class="img-list" role="list">
+        <div class="img-thumb" tabindex="0" aria-label="髋关节X线" onclick="showImg('https://dummyimage.com/400x300/2574a9/fff&text=X-ray+髋关节')" style="background-image:url('https://dummyimage.com/120x90/2574a9/fff&text=X-ray');background-size:cover;"></div>
+        <div class="img-thumb" tabindex="0" aria-label="术后康复训练" onclick="showImg('https://dummyimage.com/400x300/44b39d/fff&text=康复训练')" style="background-image:url('https://dummyimage.com/120x90/44b39d/fff&text=训练');background-size:cover;"></div>
+        <div class="img-thumb" tabindex="0" aria-label="化验单" onclick="showImg('https://dummyimage.com/400x300/ffb74d/fff&text=化验单')" style="background-image:url('https://dummyimage.com/120x90/ffb74d/fff&text=化验单');background-size:cover;"></div>
+      </div>
+      <div style="margin-top:13px;">
+        <a href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" target="_blank" style="color:var(--primary);font-weight:600;text-decoration:none;">
+          <i class="lucide lucide-download"></i> 下载PDF报告
+        </a>
+      </div>
+    </section>
+  </main>
+  <!-- 大图弹窗 -->
+  <div class="modal" id="imgModal" role="dialog" aria-modal="true" aria-label="图片大图预览" tabindex="-1">
+    <button class="modal-close" onclick="hideImg()" aria-label="关闭图片预览"><i class="lucide lucide-x"></i></button>
+    <img src="" id="modalImg" alt="病例图片" class="modal-img"/>
   </div>
-  <!-- 页脚 -->
-  <div class="footer">
-    &copy; 2025 患者康复信息系统 | <i class="bi bi-envelope-at"></i> health@hospital.cn
-  </div>
+  <!-- 底部操作栏 -->
+  <footer class="footer-bar" aria-label="底部操作">
+    <button class="footer-btn" onclick="window.location.href='/'"><i class="lucide lucide-home"></i> 返回首页</button>
+    <button class="footer-btn print" onclick="window.print()"><i class="lucide lucide-printer"></i> 打印</button>
+    <button class="footer-btn share" onclick="navigator.share ? navigator.share({title:document.title,url:location.href}) : alert('请手动复制页面链接！')"><i class="lucide lucide-share-2"></i> 分享</button>
+  </footer>
   <script>
-    // 切换页面
-    const btns = document.querySelectorAll('.nav-btn');
-    const pages = {
-      s1: document.getElementById('page-s1'),
-      s2: document.getElementById('page-s2'),
-      s3: document.getElementById('page-s3'),
-      s4: document.getElementById('page-s4'),
-    };
-    btns.forEach(btn => {
-      btn.onclick = function() {
-        btns.forEach(b=>b.classList.remove('active'));
-        this.classList.add('active');
-        const page = this.getAttribute('data-page');
-        Object.keys(pages).forEach(k=>pages[k].classList.remove('active'));
-        pages[page].classList.add('active');
-        window.scrollTo({top:0,behavior:'smooth'});
-      }
-    });
-
-    // 回到顶部按钮显隐
-    window.onscroll = function() {
-      const btn = document.getElementById("backtopBtn");
-      if(document.documentElement.scrollTop > 200) btn.style.display = "flex";
-      else btn.style.display = "none";
-    };
-    document.getElementById("backtopBtn").onclick = function(){
-      window.scrollTo({top:0,behavior:'smooth'});
+    // 图片弹窗交互
+    function showImg(src) {
+      document.getElementById('modalImg').src = src;
+      document.getElementById('imgModal').classList.add('active');
+      document.getElementById('imgModal').focus();
     }
+    function hideImg() {
+      document.getElementById('imgModal').classList.remove('active');
+      setTimeout(() => { document.getElementById('modalImg').src = ''; }, 350);
+    }
+    // 键盘无障碍：ESC关闭弹窗
+    document.addEventListener('keydown', function(e) {
+      if (e.key === "Escape") hideImg();
+    });
   </script>
 </body>
 </html>
