@@ -1,379 +1,1304 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>医学主题病例介绍</title>
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.351.0/font/lucide.css">
-  <style>
-    :root {
-      --primary: #2574A9;
-      --secondary: #44B39D;
-      --accent: #FFB74D;
-      --bg: #F8FAFB;
-      --card: #FFF;
-      --text-main: #212121;
-      --text-sub: #607D8B;
-      --shadow: 0 4px 24px 0 rgba(37,116,169,0.05);
-      --radius: 18px;
-    }
-    html, body {
-      margin: 0; padding: 0;
-      font-family: 'Source Sans Pro', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text-main);
-    }
-    * { box-sizing: border-box; }
-    .navbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 20px; background: #fff;
-      box-shadow: 0 2px 8px 0 rgba(37,116,169,0.06);
-      position: sticky; top: 0; z-index: 20;
-    }
-    .navbar .logo {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--bg); margin-right: 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; color: var(--primary); font-weight: bold;
-      box-shadow: var(--shadow);
-    }
-    .navbar .title {
-      color: var(--primary); font-weight: bold; font-size: 1.28rem;
-      letter-spacing: 2px; flex: 1; text-align: center;
-    }
-    .navbar .back-btn {
-      display: flex; align-items: center;
-      color: #b0b8c1; background: #f2f3f6;
-      border: none; border-radius: 50%; width: 36px; height: 36px;
-      justify-content: center; margin-right: 10px; cursor: pointer;
-      transition: background 0.15s;
-    }
-    .navbar .back-btn:hover { background: #e2e8f0; }
-    .navbar .avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: url('https://randomuser.me/api/portraits/women/68.jpg') center/cover;
-      border: 2px solid #f1f1f1; margin-left: 16px;
-    }
-    .container {
-      max-width: 900px; margin: 36px auto 86px auto; padding: 0 12px;
-    }
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: 28px;
-      padding: 26px 22px 20px 22px;
-      transition: box-shadow .2s, transform .2s;
-    }
-    .card:hover {
-      box-shadow: 0 6px 32px 0 rgba(37,116,169,0.14);
-      transform: translateY(-2px) scale(1.012);
-    }
-    .section-title {
-      display: flex; align-items: center;
-      color: var(--primary); font-weight: 700; font-size: 1.08rem;
-      margin-bottom: 12px; letter-spacing: 1px; gap: 7px;
-    }
-    .section-title .icon {
-      font-size: 1.1rem; color: var(--secondary);
-    }
-    .file-content-block {
-      white-space: pre-wrap;
-      font-size: 1.07em;
-      line-height: 1.72;
-      color: var(--text-main);
-      background: #fafbfc;
-      border-radius: 13px;
-      padding: 16px 18px 11px 20px;
-      margin: 0 0 10px 0;
-      word-break: break-all;
-    }
-    .file-content-block strong {
-      color: var(--primary);
-    }
-    /* 图片区 */
-    .img-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
-      gap: 14px;
-    }
-    .img-thumb {
-      border-radius: 11px;
-      overflow: hidden;
-      box-shadow: 0 1px 5px 0 rgba(68,179,157,0.09);
-      cursor: pointer;
-      background: #eef5fa;
-      transition: transform .15s, box-shadow .15s;
-      aspect-ratio: 4/3;
-      display: flex; align-items: center; justify-content: center;
-      border: 2px solid transparent;
-    }
-    .img-thumb:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 20px 0 rgba(37,116,169,0.10);
-      border-color: var(--primary);
-    }
-    /* 大图弹窗 */
-    .modal {
-      display: none; position: fixed; z-index: 30; left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(35,47,62,0.37);
-      align-items: center; justify-content: center;
-      animation: fadeIn .4s;
-    }
-    @keyframes fadeIn {from {opacity: 0;} to {opacity: 1;}}
-    .modal.active { display: flex;}
-    .modal-img {
-      max-width: 88vw; max-height: 82vh; border-radius: 18px; box-shadow: var(--shadow);
-      animation: scaleIn .35s; background: #fff;
-    }
-    @keyframes scaleIn { from {transform: scale(0.86);} to {transform: scale(1);}}
-    .modal-close {
-      position: absolute; top: 5vh; right: 6vw;
-      font-size: 2rem; color: #fff;
-      background: rgba(37,116,169,0.6); border: none;
-      border-radius: 50%; width: 44px; height: 44px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.18s;
-    }
-    .modal-close:hover { background: var(--primary);}
-    /* 底部操作栏 */
-    .footer-bar {
-      position: fixed; left: 0; bottom: 0; width: 100vw;
-      background: #fff; box-shadow: 0 -2px 16px 0 rgba(37,116,169,0.06);
-      display: flex; align-items: center; justify-content: center;
-      padding: 9px 0; gap: 18px; z-index: 25;
-    }
-    .footer-btn {
-      padding: 9px 22px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.04em;
-      font-weight: bold;
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 1px 8px 0 rgba(68,179,157,0.07);
-      cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: background .18s, transform .18s;
-    }
-    .footer-btn:hover { background: var(--secondary); transform: translateY(-2px);}
-    .footer-btn.print { background: var(--secondary);}
-    .footer-btn.share { background: var(--accent); color: #212121;}
-    @media (max-width: 600px) {
-      .container { margin-top: 13px; }
-      .card { padding: 13px 6px 13px 8px;}
-      .navbar .logo, .navbar .avatar { width: 32px; height: 32px;}
-      .footer-bar {gap: 7px;}
-      .footer-btn {padding: 8px 7px; font-size: .95em;}
-      .img-list { gap: 7px;}
-    }
-    /* 可访问性 */
-    .footer-btn:focus, .back-btn:focus, .img-thumb:focus { outline: 2px solid var(--accent);}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>髋关节置换术后康复方案 - 上体运康</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #343a40;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+        
+        .logo-badge {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            box-shadow: 极速4px 12px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+        }
+        
+        .patient-summary {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            min-width: 300极速px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid #3498db;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .summary-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary-card h3 i {
+            color: #3498db;
+            font-size: 1.4rem;
+        }
+        
+        .summary-item {
+            margin-bottom: 15px;
+            display: flex;
+            padding-left: 10px;
+            border-left: 3px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .summary-item:hover {
+            border-left-color: #3498db;
+        }
+        
+        .summary-item .label {
+            font-weight: 700;
+            width: 130px;
+            color: #495057;
+            min-width: 130px;
+        }
+        
+        .tab-container {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            background: linear-gradient(to right, #2c3e50, #4a6582);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .tabs::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab {
+            padding: 18px 30px;
+            cursor: pointer;
+            color: #e9ecef;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .tab.active {
+            background: rgba(52, 152, 219, 0.9);
+            box-shadow: inset 0 -4px 0 #2980b9;
+        }
+        
+        .tab:hover:not(.active) {
+            background: rgba(41, 128, 185, 0.7);
+        }
+        
+        .tab-content {
+            padding: 35px;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        table th {
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            color: white;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+极速    }
+        
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        table tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .warning {
+            background: #fff8e1;
+            color: #8d6e00;
+            border-left: 4px solid #ffc107;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .warning i {
+            font-size: 1.4rem;
+            color: #ffc107;
+            min-width: 24px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #ced4da;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .comparison-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            border-top: 3px solid #3498db;
+        }
+        
+        .comparison-card h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .contraindication {
+            color: #e74c3c;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .contraindication i {
+            font-size: 1.1rem;
+        }
+        
+        .data-highlight {
+            background: linear-gradient(to right, #e3f2fd, #f8f9fa);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        @media (max-width: 900px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .patient-summary {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            h1 {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: #6c757d;
+            font-size: 0.95rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 4px;
+            width: 75%;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .data-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border-top: 4px solid #3498db;
+        }
+        
+        .data-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .data-label {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .status-good {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-warning {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+        
+        .status-risk {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .medical-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: 1;
+            background-image: 
+                radial-gradient(#3498db 1px, transparent 1px),
+                radial-gradient(#2ecc71 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+        
+        .rehab-plan {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .rehab-card {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid #3498db;
+        }
+        
+        .rehab-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rehab-card ul {
+            padding-left: 25px;
+        }
+        
+        .rehab-card li {
+            margin-bottom: 10px;
+        }
+        
+        .professional-signature {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+        
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+        
+        .phase-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .phase-card {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid #3498db;
+        }
+        
+        .phase-title {
+            display:极速flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            color: #2c3e50;
+        }
+        
+        .rehab-goal {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .rehab-goal h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .rehab-content {
+            margin-bottom: 25px;
+        }
+        
+        .rehab-content h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ced4da;
+        }
+        
+        .rehab-content ul {
+            padding-left: 30px;
+        }
+        
+        .rehab-content li {
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .rehab-content li::before {
+            content: "•";
+            position: absolute;
+            left: -15px;
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .caution-box {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin: 30px 0;
+        }
+        
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #3498db;
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            width: 50%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        
+        .timeline-item::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 50%;
+            top: 24px;
+            z-index: 1;
+        }
+        
+        .timeline-item:nth-child(odd)::after {
+            right: -10px;
+        }
+        
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-date {
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-  <!-- 顶部导航栏 -->
-  <nav class="navbar" aria-label="主导航">
-    <button class="back-btn" aria-label="返回" onclick="history.back()">
-      <i class="lucide lucide-chevron-left"></i>
+    <div class="medical-bg"></div>
+    
+    <button class="print-btn" id="printBtn">
+        <i class="fas fa-print"></i> 打印报告
     </button>
-    <div class="logo" title="医学病例"><i class="lucide lucide-stethoscope"></i></div>
-    <div class="title">病例介绍</div>
-    <div class="avatar" aria-label="用户头像"></div>
-  </nav>
-  <main class="container" aria-label="病例详细内容">
-    <!-- S部分 -->
-    <section class="card" aria-label="S（主观资料）">
-      <div class="section-title"><i class="lucide lucide-quote"></i> S（主观资料）</div>
-      <div class="file-content-block">
-基本信息：女性，74岁，退休在家
-
-1. 主诉：髋关节置换近一个月恢复良好，伤口无疼痛，可独立行走，活动久后会有酸痛感
-2. 现病史：1个月前因“右侧股骨颈骨折”行右侧全髋关节置换手术（后外侧入路），术后恢复顺利，切口愈合良好，无感染或渗液。双下肢无麻木无肿胀，无夜间痛和晨僵，右膝久站或康复训练后酸痛。
-3. 治疗史：术后前三天，进行床上康复训练（踝泵、直腿抬高、股四等长收缩）。术后三天下床，助行器辅助下步行。目前练习单脚站，自主步行，站立位髋内收外展，膝关节屈伸。右膝照红外灯，右侧股四头肌低频电。
-4. 既往史：骨质疏松症10余年，由于腰椎间盘突出行腰椎间盘置换手术，左手尺骨鹰嘴骨折钢钉固定。否认高血压、糖尿病等慢病史。否认长期大量吸烟喝酒史。
-5. 家族史和个人史：母亲患有骨质疏松。目前与子女共居，平日女儿陪同照顾。
-6. 用药史：口服阿仑膦酸钠+钙剂
-7. 过敏史：否认药物过敏、食物过敏史。
-      </div>
-    </section>
-
-    <!-- O部分 -->
-    <section class="card" aria-label="O（客观资料）">
-      <div class="section-title"><i class="lucide lucide-search-check"></i> O（客观资料）</div>
-      <div class="file-content-block">
-生命体征：HR：86次/分，T：36.7℃
-
-体格检查：
-1. 手术切口：右侧髋部后外侧切口愈合佳，无红肿、压痛及渗出。
-2. 关节主动活动度：（双侧主动Rom差异和主被动ROM差异大主要是因为患者主诉酸痛和恐惧因素）
-   - 右屈髋：0-90度（大于90禁忌症）。
-   - 右伸髋：0-11度
-   - 右外展：0-32度
-   - 右内收：/（禁忌症内收不可过中立位）
-   - 右内旋：/（禁忌症不可内旋）
-   - 右外旋：0-12度
-   - 左屈髋：0-113度（120）
-   - 左伸髋：0-18度（20）
-   - 左外展：0-40度（40）
-   - 左内收：0-23度（25）
-   - 左内旋：0-21度（30）
-   - 左外旋：0-37度（45）
-
-3. 关节被动活动度：
-   - 右屈髋：0-90度（大于90禁忌症）。
-   - 右伸髋：0-15度
-   - 右外展：0-35度
-   - 右内收：/（禁忌症内收不可过中立位）
-   - 右内旋：/（禁忌症不可内旋）
-   - 右外旋：0-30度
-   - 左屈髋：0-122度
-   - 左伸髋：0-25度
-   - 左外展：0-43度
-   - 左内收：0-25度
-   - 左内旋：0-25度
-   - 左外旋：0-40度
-
-4. 肌力（外展、内外旋肌群薄弱，与手术需剥离部分外展外旋肌以及患者自身因素有关。伸髋较健侧其实不足，与手术入路和术后长期保护限制有关）
-   - 右屈髋：4级（髂腰肌、股直肌）
-   - 右伸髋：4级（臀大肌、腘绳肌）
-   - 右外展：3级（臀中肌、臀小肌）
-   - 右内收：4级
-   - 右内旋：3级（阔筋膜张肌、臀小肌）
-   - 右外旋：3级（梨状肌、闭孔肌群）
-   - 左屈髋：4级
-   - 左伸髋：4级
-   - 左外展：4级
-   - 左内收：4级
-   - 左内旋：4级
-   - 左外旋：3级
-   - 右屈膝：4级
-   - 右伸膝：4级（无法保持，会有明显不适）
-   - 左屈膝：4级
-   - 左伸膝：4级
-
-5. 姿态：驼背、头前倾、膝过伸、骨盆前倾（韧带松弛、肌肉力量下降）
-6. 步态：助行器辅助行走，步幅小，患侧单支撑相时间稍短、足尖着地（稍轻版减痛步态）
-7. 平衡：左侧睁眼单脚站立小于1秒，右侧拒做
-      </div>
-    </section>
-
-    <!-- A部分 -->
-    <section class="card" aria-label="A（评估）">
-      <div class="section-title"><i class="lucide lucide-heart-pulse"></i> A（评估）</div>
-      <div class="file-content-block">
-- 诊断：右侧全髋关节置换术后恢复期（后外侧入路）、骨质疏松
-- 康复评估：功能恢复良好，患侧髋外展和内旋肌力明显较弱（可能与手术入路和保护性制动有关），患侧膝关节肌群肌耐力差，双下肢平衡能力差。
-- 风险因素：骨折风险高，日常生活注意禁忌症防脱位。
-      </div>
-    </section>
-
-    <!-- P部分 -->
-    <section class="card" aria-label="P（康复方案）">
-      <div class="section-title"><i class="lucide lucide-clipboard-check"></i> P（康复方案）</div>
-      <div class="file-content-block">
-4-8周（恢复期）
-
-1. 目标：
-   - 屈髋、内收ROM逐步恢复（根据患者软组织愈合情况逐步放宽限制，通常6周后开始）
-   - 提升髋外展外旋肌力
-   - 步态恢复至术后状态
-
-2. 物理因子
-   - 低频电：右侧股四头肌，20Hz，15分钟/次，1次/日，缓解肌肉萎缩及酸痛。
-   - 红外灯：右膝局部（20分钟/次，1次/日），改善循环，减轻训练后炎症反应。
-
-3. 手法治疗
-   - 软组织松解：髋外展、内外旋肌群手法放松，降低肌张力改善本体感觉。
-   - 关节松动术：髋关节I-II级松动（仰卧位前后滑动），无痛范围内改善关节囊延展性。
-   - 瘢痕管理：切口瘢痕松动（术后6周后开始），预防粘连。
-
-4. 肌力训练：
-   - 外展肌群：侧卧位髋外展（自重到弹力带，10次×3组，2次/日）
-   - 臀肌激活：臀桥（双桥→前后脚交错，保持5秒，10次×3组）
-   - 股四头肌：坐位屈膝伸膝（自重到沙袋0.5-1kg，15次×3组）
-
-5. 主动活动：
-   - 仰卧位自主屈髋（6周前0-90度，6周后视软组织恢复情况逐步放宽角度，要在无痛范围内）
-   - 俯卧位屈膝自主内外旋（6周后）
-
-6. 步态训练：
-   - 助行器→单拐过渡，强调足跟-足尖着地模式。
-
-7. 注意事项
-   - 防脱位：康复时注意活动度度数限制
-
-
-8周-3个月（功能性强化）
-
-1. 目标：
-   - 日常生活能力恢复（上下台阶等）
-   - 单腿站立、起立-行走计时试验等在相应年龄组正常范围内
-
-2. 物理因子
-   - 超声治疗：右髋关节周围软组织（1.0W/cm²，5分钟），促进深层组织修复
-   - 全身振动训练仪：激活肌肉，振动模式下静态半蹲肌力训练效果更佳，该患者骨质疏松可用低频振动有利于促进骨重塑。
-
-3. 手法治疗
-   - 关节松动：髋关节III-IV级松动（内旋/外旋），可结合肌肉能量技术（MET）改善终末活动度。
-
-4. 功能性训练
-   - 上下台阶：10cm台阶，患侧先行，10次×3组。注意控制离心。
-   - 弓步训练：扶墙小幅前弓步，8次×3组（膝关节不超过脚尖）
-   - 靠墙静蹲：下肢闭链练习，髋膝屈90度，背部靠墙静态保持。
-   - 单腿站立（睁眼→闭眼，自动态→他动态，30秒×5组）
-
-5. 日常生活模拟
-   - 坐-站转移（无扶手辅助）
-   - 模拟穿衣、拾物（注意保护腰椎，避免弯腰）
-
-6. 康复宣教
-   - 避免急停急转或负荷大的冲击性动作
-   - 注意防跌倒措施（防滑垫、扶手等）
-   - 布置家庭作业
-   - 训练后肌肉松解
-      </div>
-    </section>
-    <!-- 附件区 -->
-    <section class="card" aria-label="图片与附件">
-      <div class="section-title"><i class="lucide lucide-image"></i> 图片与附件区</div>
-      <div class="img-list" role="list">
-        <div class="img-thumb" tabindex="0" aria-label="X线片" onclick="showImg('https://dummyimage.com/400x300/2574a9/fff&text=X-ray+髋关节')" style="background-image:url('https://dummyimage.com/120x90/2574a9/fff&text=X-ray');background-size:cover;"></div>
-        <div class="img-thumb" tabindex="0" aria-label="康复训练" onclick="showImg('https://dummyimage.com/400x300/44b39d/fff&text=康复训练')" style="background-image:url('https://dummyimage.com/120x90/44b39d/fff&text=训练');background-size:cover;"></div>
-        <div class="img-thumb" tabindex="0" aria-label="化验单" onclick="showImg('https://dummyimage.com/400x300/ffb74d/fff&text=化验单')" style="background-image:url('https://dummyimage.com/120x90/ffb74d/fff&text=化验单');background-size:cover;"></div>
-      </div>
-      <div style="margin-top:13px;">
-        <a href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" target="_blank" style="color:var(--primary);font-weight:600;text-decoration:none;">
-          <i class="lucide lucide-download"></i> PDF下载
-        </a>
-      </div>
-    </section>
-  </main>
-  <!-- 大图弹窗 -->
-  <div class="modal" id="imgModal" role="dialog" aria-modal="true" aria-label="图片大图预览" tabindex="-1">
-    <button class="modal-close" onclick="hideImg()" aria-label="关闭图片预览"><i class="lucide lucide-x"></i></button>
-    <img src="" id="modalImg" alt="病例图片" class="modal-img"/>
-  </div>
-  <!-- 底部操作栏 -->
-  <footer class="footer-bar" aria-label="底部操作">
-    <button class="footer-btn" onclick="window.location.href='/'"><i class="lucide lucide-home"></i> 返回首页</button>
-    <button class="footer-btn print" onclick="window.print()"><i class="lucide lucide-printer"></i> 打印</button>
-    <button class="footer-btn share" onclick="navigator.share ? navigator.share({title:document.title,url:location.href}) : alert('请手动复制页面链接！')"><i class="lucide lucide-share-2"></i> 分享</button>
-  </footer>
-  <script>
-    function showImg(src) {
-      document.getElementById('modalImg').src = src;
-      document.getElementById('imgModal').classList.add('active');
-      document.getElementById('imgModal').focus();
-    }
-    function hideImg() {
-      document.getElementById('imgModal').classList.remove('active');
-      setTimeout(() => { document.getElementById('modalImg').src = ''; }, 350);
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === "Escape") hideImg();
-    });
-  </script>
+    
+    <div class="container">
+        <header>
+            <h1>
+                <i class="fas fa-bone"></i>
+                髋关节置换术后康复方案
+                <span class="logo-badge">
+                    <i class="fas fa-user-md"></i>
+                    上体运康
+                </span>
+            </h1>
+            <p class="header-subtitle">74岁女性患者 | 右侧全髋关节置换术后1个月 | 骨质疏松症</p>
+        </header>
+        
+        <div class="patient-summary">
+            <div class="summary-card">
+                <h3><i class="fas fa-user-circle"></i> 患者基本信息</h3>
+                <div class="summary-item">
+                    <div class="label">年龄：</div>
+                    <div>74岁（女性）</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">手术：</div>
+                    <div>右侧全髋关节置换术（后外侧入路）</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">手术时间：</div>
+                    <div>1个月前</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">居住情况：</div>
+                    <div>与子女同住，女儿照顾</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">既往史：</div>
+                    <div>骨质疏松(10余年)，腰椎间盘置换术，左尺骨鹰嘴骨折</div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h3><i class="fas fa-heartbeat"></i> 当前状态</h3>
+                <div class="summary-item">
+                    <div class="label">恢复情况：</div>
+                    <div><span class="status-good status-indicator"><i class="fas fa-check-circle"></i> 切口愈合良好</span></div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">主要症状：</div>
+                    <div><span class="status-warning status-indicator"><i class="fas fa-exclamation-triangle"></极速i> 活动后髋关节酸痛</span></div>
+                </div>
+                <div class="summary极速-item">
+                    <div class="label">生命体征：</div>
+                    <div>HR: 86次/分，T: 36.7℃</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">步态：</div>
+                    <div><span class="status-warning status-indicator"><i class="fas fa-walking"></i> 助行器辅助，减痛步态</span></div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">平衡能力：</div>
+                    <div><span class="status-risk status-indicator"><i class="fas fa-exclamation-circle"></i> 单脚站立不足1秒</span></div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h3><i class="fas fa-file-medical-alt"></i> 治疗与风险</h3>
+                <div class="summary-item">
+                    <div class="label">当前治疗：</div>
+                    <div>步行训练，肌力训练，红外线治疗</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">药物治疗：</div>
+                    <div>阿仑膦酸钠 + 钙剂</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">禁忌症：</div>
+                    <div><span class="contraindication"><i class="fas fa-ban"></i> 屈髋＞90°</span>，<span class="contraindication"><i class="fas fa-ban"></i> 内收过中立位</span></div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">风险因素：</div>
+                    <div><span class="status-risk status-indicator"><i class="fas fa-exclamation-triangle"></i> 高骨折风险</span></div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">恢复进度：</div>
+                    <div>75% (术后1个月)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="subjective">主观资料 (S)</div>
+                <div class="tab" data-tab="objective">客观资料 (O)</div>
+                <div class="tab" data-tab="assessment">评估 (A)</div>
+                <div class="tab" data-tab="rehabilitation">康复方案 (P)</div>
+            </div>
+            
+            <div id="subjective" class="tab-content active">
+                <h2><i class="fas fa-file-medical"></i> 主观资料 (Subjective)</h2>
+                
+                <div class="section">
+                    <h3><i class="fas fa-comment-medical"></i> 主诉</h3>
+                    <div class="data-highlight">
+                        <p>髋关节置换近一个月恢复良好，伤口无疼痛，可独立行走，活动久后会有酸痛感</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-history"></i> 现病史</h3>
+                    <p>1个月前因"右侧股骨颈骨折"行右侧全髋关节置换手术（后外侧入路），术后恢复顺利，切口愈合良好，无感染或渗液。双下肢无麻木无肿胀，无夜间痛和晨僵，右膝久站或康复训练后酸痛。</p>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-procedures"></i> 治疗史</h3>
+                    <p>术后前三天，进行床上康复训练（踝泵、直腿抬高、股四等长收缩）。术后三天下床，助行器辅助下步行。目前练习单脚站，自主步行，站立位髋内收外展，膝关节屈伸。右膝照红外灯，右侧股四头肌低频电。</p>
+                </div>
+                
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-value">3天</div>
+                        <div class="data-label">术后下床时间</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">4周</div>
+                        <div class="data-label">当前恢复周期</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">2种</div>
+                        <div class="data-label">物理治疗方式</div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-file-medical"></i> 既往史</h3>
+                    <p>骨质疏松症10余年，由于腰椎间盘突出行腰椎间盘置换手术，左手尺骨鹰嘴骨折钢钉固定。否认高血压、糖尿病等慢病史。否认长期大量吸烟喝酒史。</p>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-users"></i> 家族史和个人史</h3>
+                    <p>母亲患有骨质疏松。目前与子女共居，平日女儿陪同照顾。</p>
+                </div>
+                
+                <div class="professional-signature">
+                    <h3><i class="fas fa-stamp"></i> 康复师评估</h3>
+                    <p>患者术后恢复情况良好，但需注意骨质疏松症带来的骨折风险。目前康复计划应侧重于肌力恢复和步态训练，同时加强平衡能力训练。</p>
+                    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+                        <span>康复师：实训小组5</span>
+                        <span>日期：2025年5月29日</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="objective" class="tab-content">
+                <h2><i class="fas fa-stethoscope"></i> 客观资料 (Objective)</h2>
+                
+                <div class="section">
+                    <h3><i class="fas fa-heartbeat"></i> 生命体征</h3>
+                    <div class="data-highlight">
+                        <p>心率 (HR)：86次/分，体温 (T)：36.7℃</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-cut"></i> 手术切口</h3>
+                    <p>右侧髋部后外侧切口愈合佳，无红肿、压痛及渗出。</p>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-arrows-alt"></i> 关节活动度 (ROM)</h3>
+                    
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <h4>主动关节活动度</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>动作</th>
+                                        <th>右侧</th>
+                                        <th>左侧</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>屈髋</td>
+                                        <td>0-90° <span class="contraindication"><i class="fas fa-exclamation-triangle"></i> (禁忌>90°)</span></td>
+                                        <td>0-113° (正常120°)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>伸髋</td>
+                                        <td>0-11°</td>
+                                        <td>0-18° (正常20°)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>外展</td>
+                                        <td>0-32°</td>
+                                        <td>0-40° (正常40°)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>内收</td>
+                                        <td class="contraindication"><i class="fas fa-ban"></i> 禁忌过中立位</td>
+                                        <td>0-23° (正常25°)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>内旋</td>
+                                        <td class="contraindication"><i class="fas fa-ban"></i> 禁忌</td>
+                                        <td>0-21° (正常30°)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>外旋</td>
+                                        <td>0-12°</td>
+                                        <td>0-37° (正常45°)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="comparison-card">
+                            <h4>被动关节活动度</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>动作</th>
+                                        <th>右侧</th>
+                                        <th>左侧</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>屈髋</td>
+                                        <td>0-90° <span class="contraindication"><i class="fas fa-exclamation-triangle"></i> (禁忌>90°)</span></td>
+                                        <td>0-122°</td>
+                                    </tr>
+                                    <tr>
+                                        <td>伸髋</td>
+                                        <td>0-15°</td>
+                                        <td>0-25°</td>
+                                    </tr>
+                                    <tr>
+                                        <td>外展</td>
+                                        <td>0-35°</td>
+                                        <td>0-43°</td>
+                                    </tr>
+                                    <tr>
+                                        <td>内收</td>
+                                        <td class="contraindication"><i class="fas fa-ban"></i> 禁忌过中立位</td>
+                                        <td>0-25°</td>
+                                    </tr>
+                                    <tr>
+                                        <td>内旋</td>
+                                        <td class="contraindication"><i class="fas fa-ban"></i> 禁忌</td>
+                                        <td>0-25°</td>
+                                    </tr>
+                                    <tr>
+                                        <td>外旋</td>
+                                        <td>0-30°</td>
+                                        <td>0-40°</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-dumbbell"></i> 肌力评估 (MMT分级)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>动作</th>
+                                <th>右侧</th>
+                                <th>左侧</th>
+                                <th>主要肌肉</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>屈髋</td>
+                                <td>4级</td>
+                                <td>4级</td>
+                                <td>髂腰肌、股直肌</td>
+                            </tr>
+                            <tr>
+                                <td>伸髋</td>
+                                <td>4级</td>
+                                <td>4级</td>
+                                <td>臀大肌、腘绳肌</td>
+                            </tr>
+                            <tr>
+                                <td>外展</td>
+                                <td><span class="status-warning status-indicator">3级</span></td>
+                                <td>4级</td>
+                                <td>臀中肌、臀小肌</td>
+                            </tr>
+                            <tr>
+                                <td>内收</td>
+                                <td>4级</td>
+                                <td>4级</td>
+                                <td>内收肌群</td>
+                            </tr>
+                            <tr>
+                                <td>内旋</td>
+                                <td><span class="status-warning status-indicator">3级</span></td>
+                                <td>4级</td>
+                                <td>阔筋膜张肌、臀小肌</td>
+                            </tr>
+                            <tr>
+                                <td>外旋</td>
+                                <td>3级</td>
+                                <td>3级</td>
+                                <td>梨状肌、闭孔肌群</td>
+                            </tr>
+                            <tr>
+                                <td>屈膝</td>
+                                <td>4级</td>
+                                <td>4级</极速td>
+                                <td>腘绳肌</td>
+                            </tr>
+                            <tr>
+                                <td>伸膝</td>
+                                <td><span class="status-warning status-indicator">4级 (无法保持)</span></td>
+                                <td>4级</td>
+                                <td>股四头肌</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="warning">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>评估说明：</strong> 右侧外展和内旋肌群明显薄弱(3级)，可能与后外侧手术入路需剥离部分外展外旋肌以及术后长期保护限制有关。伸髋较健侧不足。
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-walking"></i> 姿态与步态</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>评估项目</th>
+                                <th>观察结果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>姿态</td>
+                                <td>驼背、头前倾、膝过伸、骨盆前倾 (韧带松弛、肌肉力量下降)</td>
+                            </tr>
+                            <tr>
+                                <td>步态</td>
+                                <td>助行器辅助行走，步幅小，患侧单支撑相时间稍短、足尖着地 (稍轻版减痛步态)</td>
+                            </tr>
+                            <tr>
+                                <td>平衡能力</td>
+                                <td>左侧睁眼单脚站立小于1秒，右侧拒做</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="assessment" class="tab-content">
+                <h2><i class="fas fa-clipboard-check"></i> 评估 (Assessment)</h2>
+                
+                <div class="section">
+                    <h3><i class="fas fa-diagnoses"></i> 诊断</h3>
+                    <ul class="data-highlight" style="padding: 20px; list-style-type: none;">
+                        <li style="margin-bottom: 12px;"><i class="fas fa-bone" style="color: #3498db; margin-right: 10px;"></i> 右侧全髋关节置换术后恢复期（后外侧入路）</li>
+                        <li><i class="fas fa-bone" style="color: #3498db; margin-right: 10px;"></i> 骨质疏松症</li>
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-clipboard-list"></i> 康复评估</h3>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-value">良好</div>
+                            <div class="data-label">切口愈合</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value">较弱</div>
+                            <div class="data-label">外展肌力</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value">不足</div>
+                            <div class="data-label">平衡能力</div>
+                        </div>
+                    </div>
+                    
+                    <ul style="padding-left: 25px; margin-top: 20px;">
+                        <li style="margin-bottom: 12px;">术后功能恢复总体良好，切口愈合佳</li>
+                        <li style="margin-bottom: 12px;">患侧髋关节外展和内旋肌力明显较弱（3级）</li>
+                        <li style="margin-bottom: 12px;">右侧膝关节肌群肌耐力差（伸膝无法保持）</li>
+                        <li style="margin-bottom: 12px;">双下肢平衡能力差（单脚站立时间短）</li>
+                        <li>存在轻度减痛步态模式</li>
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> 风险因素</h3>
+                    <div class="warning">
+                        <i class="fas fa-radiation"></i>
+                        <div>
+                            <strong>高风险：</strong> 由于骨质疏松症病史长达10余年，患者骨折风险较高
+                        </div>
+                    </div>
+                    <div class="warning">
+                        <i class="fas fa-bone"></i>
+                        <div>
+                            <strong>关节脱位风险：</strong> 后外侧入路术后早期易发生关节脱位，日常生活需严格注意禁忌动作（屈髋＞90°、内收过中立位、内旋）
+                        </div>
+                    </div>
+                    <div class="warning">
+                        <i class="fas fa-walking"></i>
+                        <div>
+                            <strong>功能恢复风险：</strong> 右侧外展肌力弱可能影响步态稳定性，增加跌倒风险
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-calendar-alt"></i> 康复时间线</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">术后第1周</div>
+                            <div class="timeline-content">
+                                <p>床上康复训练：踝泵、直腿抬高、股四头肌等长收缩</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">术后第2周</div>
+                            <div class="timeline-content">
+                                <p>助行器辅助下步行训练，开始关节活动度训练</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">术后第3周</div>
+                            <div class="timeline-content">
+                                <p>肌力强化训练，平衡训练，步态矫正</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">术后第4周</div>
+                            <div class="timeline-content">
+                                <p>进阶肌力训练，功能性训练，逐步减少助行器依赖</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="rehabilitation" class="tab-content">
+                <h2><i class="fas fa-dumbbell"></i> 康复方案 (Rehabilitation Plan)</h2>
+                
+                <div class="phase-container">
+                    <div class="phase-card">
+                        <div class="phase-title">
+                            <i class="fas fa-heartbeat"></i>
+                            <h3>4-8周（恢复期）康复方案</h3>
+                        </div>
+                        
+                        <div class="rehab-goal">
+                            <h4><i class="fas fa-bullseye"></i> 康复目标</h4>
+                            <ul>
+                                <li>屈髋、内收ROM逐步恢复（根据患者软组织愈合情况逐步放宽限制，通常6周后开始）</li>
+                                <li>提升髋外展外旋肌力</li>
+                                <li>步态恢复至术后状态</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-microchip"></i> 物理因子治疗</h4>
+                            <ul>
+                                <li>低频电：右侧股四头肌，20Hz，15分钟/次，1次/日，缓解肌肉萎缩及酸痛</li>
+                                <li>红外灯：右膝局部（20分钟/次，1次/日），改善循环，减轻训练后炎症反应</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-hands"></i> 手法治疗</h4>
+                            <ul>
+                                <li>软组织松解：髋外展、内外旋肌群手法放松，降低肌张力改善本体感觉</li>
+                                <li>关节松动术：髋关节I-II级松动（仰卧位前后滑动），无痛范围内改善关节囊延展性</li>
+                                <li>瘢痕管理：切口瘢痕松动（术后6周后开始），预防粘连</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-running"></i> 肌力训练</h4>
+                            <ul>
+                                <li>外展肌群：侧卧位髋外展（自重到弹力带，10次×3组，2次/日）</li>
+                                <li>臀肌激活：臀桥（双桥→前后脚交错，保持5秒，10次×3组）</li>
+                                <li>股四头肌：坐位屈膝伸膝（自重到沙袋0.5-1kg，15次×3组）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-walking"></i> 主动活动</h4>
+                            <ul>
+                                <li>仰卧位自主屈髋（6周前0-90度，6周后视软组织恢复情况逐步放宽角度，要在无痛范围内）</li>
+                                <li>俯卧位屈膝自主内外旋（6周后）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-shoe-prints"></i> 步态训练</h4>
+                            <ul>
+                                <li>助行器→单拐过渡，强调足跟-足尖着地模式</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="caution-box">
+                            <h4><i class="fas fa-exclamation-triangle"></i> 注意事项</h4>
+                            <p>防脱位：康复时注意活动度度数限制</p>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <div class="phase-title">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>8周-3个月（功能性强化）康复方案</h3>
+                        </div>
+                        
+                        <div class="rehab-goal">
+                            <h4><i class="fas fa-bullseye"></i> 康复目标</h4>
+                            <ul>
+                                <li>日常生活能力恢复（上下台阶等）</li>
+                                <li>单腿站立、起立-行走计时试验等在相应年龄组正常范围内</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-microchip"></i> 物理因子治疗</h4>
+                            <ul>
+                                <li>超声治疗：右髋关节周围软组织（1.0W/cm²，5分钟），促进深层组织修复</li>
+                                <li>全身振动训练仪：激活肌肉，振动模式下静态半蹲肌力训练效果更佳，该患者骨质疏松可用低频振动有利于促进骨重塑</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-hands"></i> 手法治疗</h4>
+                            <ul>
+                                <li>关节松动：髋关节III-IV级松动（内旋/外旋），可结合肌肉能量技术（MET）改善终末活动度</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-running"></i> 功能性训练</h4>
+                            <ul>
+                                <li>上下台阶：10cm台阶，患侧先行，10次×3组。注意控制离心</li>
+                                <li>弓步训练：扶墙小幅前弓步，8次×3组（膝关节不超过脚尖）</li>
+                                <li>靠墙静蹲：下肢闭链练习，髋膝屈90度，背部靠墙静态保持</li>
+                                <li>单腿站立（睁眼→闭眼，自动态→他动态，30秒×5组）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-home"></i> 日常生活模拟</h4>
+                            <ul>
+                                <li>坐-站转移（无扶手辅助）</li>
+                                <li>模拟穿衣、拾物（注意保护腰椎，避免弯腰）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rehab-content">
+                            <h4><i class="fas fa-book-medical"></i> 康复宣教</h4>
+                            <ul>
+                                <li>避免急停急转或负荷大的冲击性动作</li>
+                                <li>注意防跌倒措施（防滑垫、扶手等）</li>
+                                <li>布置家庭作业</li>
+                                <li>训练后肌肉松解</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="caution-box">
+                            <h4><i class="fas fa-exclamation-triangle"></i> 注意事项</h4>
+                            <p>骨质疏松患者需避免高强度冲击训练，所有训练应在无痛范围内进行</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="professional-signature">
+                    <h3><i class="fas fa-file-signature"></i> 康复方案制定</h3>
+                    <p>本康复方案基于患者术后1个月的评估结果制定，分为恢复期（4-8周）和功能性强化期（8周-3个月）两个阶段。方案设计考虑了患者骨质疏松的特殊情况，所有训练均在安全范围内进行。</p>
+                    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+                        <span>康复师：实训小组5</span>
+                        <span>制定日期：2025年5月29日</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><i class="fas fa-file-medical-alt"></i> 髋关节置换术后康复评估与方案报告</p>
+            <p style="margin-top: 10px;"><i class="fas fa-user-md"></i> 康复治疗师：实训小组5</p>
+            <p style="margin-top: 5px;"><i class="fas fa-calendar-alt"></i> 报告日期：2025年6月4日</p>
+            <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <span><i class="fas fa-map-marker-alt"></i> 地址: 上海市杨浦区清源环路650号</span>
+            </div>
+            <div style="margin-top: 20px; font-size: 0.85rem; color: #868e96;">
+                <p>本报告仅作为临床康复参考，最终解释权归上体运康康复中心所有</p>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Tab切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有tab的active类
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // 为当前点击的tab添加active类
+                    tab.classList.add('active');
+                    
+                    // 显示对应的内容
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // 打印功能
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+        });
+    </script>
 </body>
 </html>
