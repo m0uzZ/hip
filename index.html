@@ -1,537 +1,531 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>患者康复信息交互页面</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Source+Han+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --main-bg: #f6f8fb;
-            --card-bg: #fff;
-            --primary: #2277ee;
-            --primary-dark: #1656b7;
-            --secondary: #00bfae;
-            --border: #e5e9f2;
-            --shadow: 0 4px 16px 0 rgba(34,119,238,0.07);
-            --text: #222;
-            --subtext: #888;
-        }
-        body {
-            font-family: 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
-            background: var(--main-bg);
-            margin: 0;
-            color: var(--text);
-        }
-        .navbar {
-            width: 100%;
-            background: linear-gradient(90deg, var(--primary) 60%, var(--secondary));
-            color: #fff;
-            padding: 18px 10vw;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            box-shadow: 0 4px 18px 0 rgba(34,119,238,0.09);
-        }
-        .navbar h1 {
-            font-size: 1.6rem;
-            margin: 0;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
-        .navbar .bi-heart-pulse {
-            font-size: 2rem;
-            margin-right: 10px;
-        }
-        .container {
-            max-width: 880px;
-            margin: 30px auto 0;
-            padding: 0 12px 40px;
-        }
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            margin-bottom: 28px;
-            padding: 0;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp .9s cubic-bezier(.42,0,.58,1) forwards;
-        }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        details[open] > summary i {
-            color: var(--primary-dark);
-        }
-        details {
-            padding: 0;
-        }
-        summary {
-            font-size: 1.18rem;
-            font-weight: 600;
-            outline: none;
-            padding: 20px 28px 18px 28px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            user-select: none;
-            background: linear-gradient(90deg,#f8fbff 75%,#e8f6ff 100%);
-            border-bottom: 1px solid var(--border);
-            transition: background 0.3s;
-        }
-        summary i {
-            font-size: 1.4em;
-            margin-right: 9px;
-            color: var(--secondary);
-        }
-        details[open] summary {
-            background: linear-gradient(90deg,#e6f1ff 80%,#d3fbf8 100%);
-        }
-        .card-content {
-            padding: 22px 28px 24px 38px;
-        }
-        ul, ol {
-            margin: 0;
-            padding-left: 20px;
-        }
-        ul li, ol li {
-            margin-bottom: 7px;
-        }
-        .note {
-            font-size: 0.97em;
-            color: var(--subtext);
-            margin-bottom: 18px;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-        }
-        .note i {
-            color: var(--secondary);
-            font-size: 1.1em;
-            margin-right: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0 4px 0;
-            background: #f7fbfd;
-            border-radius: 8px;
-            overflow: hidden;
-            font-size: 0.98em;
-        }
-        th, td {
-            border: 1px solid var(--border);
-            padding: 9px 6px;
-            text-align: center;
-        }
-        th {
-            background: #e5f1fd;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        tr:nth-child(even) td {
-            background: #f0f6fa;
-        }
-        .card:hover {
-            box-shadow: 0 8px 30px 0 rgba(34,119,238,0.17);
-            transition: box-shadow 0.3s;
-        }
-        .subsection {
-            margin-bottom: 16px;
-            margin-top: 10px;
-        }
-        .chip {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 99px;
-            font-size: 0.95em;
-            background: #e7f4fe;
-            color: var(--primary-dark);
-            margin-left: 9px;
-            vertical-align: middle;
-        }
-        .action-btn {
-            background: var(--primary);
-            color: #fff;
-            padding: 7px 16px;
-            border-radius: 7px;
-            border: none;
-            font-size: 1em;
-            cursor: pointer;
-            margin-top: 8px;
-            margin-right: 8px;
-            box-shadow: 0 2px 8px 0 rgba(34,119,238,0.05);
-            transition: background 0.23s;
-        }
-        .action-btn:hover {
-            background: var(--primary-dark);
-        }
-        .flex-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 13px 22px;
-        }
-        .tag {
-            font-size: 0.98em;
-            background: #f3f9fd;
-            color: var(--primary);
-            border-radius: 6px;
-            padding: 1px 9px;
-            margin-right: 8px;
-        }
-        .footer {
-            text-align: center;
-            font-size: 0.97em;
-            color: #aaa;
-            margin: 40px 0 5px 0;
-        }
-        .backtop {
-            position: fixed;
-            bottom: 33px;
-            right: 32px;
-            background: var(--primary);
-            color: #fff;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 18px 0 rgba(34,119,238,0.12);
-            z-index: 90;
-            font-size: 2em;
-            transition: background .23s;
-            display: none;
-        }
-        .backtop:hover {
-            background: var(--secondary);
-        }
-        @media (max-width: 700px) {
-            .navbar {
-                padding: 18px 4vw;
-            }
-            .container {
-                max-width: 99vw;
-                padding: 0 1vw 30px;
-            }
-            .card-content, summary {
-                padding-left: 6vw;
-                padding-right: 6vw;
-            }
-        }
-        @media (max-width: 500px) {
-            .navbar h1 {
-                font-size: 1.08rem;
-            }
-            .card-content, summary {
-                font-size: 0.97rem;
-                padding-left: 4vw;
-                padding-right: 4vw;
-            }
-            .backtop {
-                width: 40px; height: 40px; font-size: 1.3em; right: 9px; bottom: 14px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>患者康复信息互动系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google 字体和 Bootstrap 图标 -->
+  <link href="https://fonts.googleapis.com/css2?family=Source+Han+Sans+SC:wght@700;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --blue: #2979ff;
+      --cyan: #05c0d0;
+      --pink: #f26798;
+      --green: #4dd29c;
+      --yellow: #fbb23e;
+      --page-bg: #f5f8fa;
+      --card-bg: #fff;
+      --shadow: 0 8px 32px 0 rgba(60,110,255,0.09);
+      --border: #e5eaf2;
+      --nav-height: 74px;
+      --font-main: 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+      --big-title: 28px;
+      --subtitle: 23px;
+      --body-font: 21px;
+      --sm-font: 19px;
+    }
+    body {
+      margin: 0;
+      background: var(--page-bg);
+      font-family: var(--font-main);
+      color: #18254c;
+      font-size: var(--body-font);
+      min-height: 100vh;
+      padding-bottom: 70px;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, var(--blue), var(--cyan) 70%);
+      height: var(--nav-height);
+      box-shadow: 0 4px 24px 0 rgba(60,110,255,0.07);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0 5vw;
+    }
+    .navbar-title {
+      font-size: var(--big-title);
+      color: #fff;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-right: 30px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .navbar-title .bi {
+      font-size: 1.7em;
+      margin-right: 13px;
+      color: #fff;
+    }
+    .nav-tabs {
+      display: flex;
+      flex: 1;
+      justify-content: flex-start;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      outline: none;
+      color: #e6eefe;
+      font-size: 1.1em;
+      padding: 15px 27px;
+      margin: 0 8px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      font-weight: 600;
+      border-bottom: 4px solid transparent;
+      transition: all 0.19s;
+      letter-spacing: 1px;
+      border-radius: 13px 13px 0 0;
+      position: relative;
+      z-index: 2;
+    }
+    .nav-btn.active {
+      color: #18254c;
+      background: #fff;
+      border-bottom: 5px solid var(--blue);
+      box-shadow: 0 8px 22px 0 rgba(60,110,255,0.12);
+    }
+    .nav-btn .bi {
+      margin-right: 7px;
+      font-size: 1.17em;
+      vertical-align: middle;
+    }
+    /* 每页顶色条 */
+    .page-header {
+      height: 9px;
+      border-radius: 18px 18px 0 0;
+      margin-bottom: 0;
+    }
+    .page-header.s1 {background: linear-gradient(90deg,var(--blue),var(--cyan));}
+    .page-header.s2 {background: linear-gradient(90deg,var(--pink),#fbebef);}
+    .page-header.s3 {background: linear-gradient(90deg,var(--green),var(--cyan));}
+    .page-header.s4 {background: linear-gradient(90deg,var(--yellow),#ffeeb2);}
+    /* 内容卡片 */
+    .page-card {
+      margin: 30px auto;
+      max-width: 970px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border-radius: 23px;
+      padding: 40px 50px 40px 50px;
+      animation: fadein 0.75s cubic-bezier(.42,0,.58,1);
+      position: relative;
+      min-height: 330px;
+    }
+    @keyframes fadein {
+      0% {opacity: 0;transform:translateY(40px);}
+      100% {opacity: 1;transform:translateY(0);}
+    }
+    .page-title {
+      font-size: var(--big-title);
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin: 6px 0 22px 0;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+    }
+    .page-title .bi {
+      margin-right: 15px;
+      font-size: 1.37em;
+      color: var(--cyan);
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 12px;
+      margin: 0 8px;
+      font-size: 0.85em;
+      border-radius: 8px;
+      background: #e7f4fe;
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .section {
+      margin-bottom: 23px;
+    }
+    .section-title {
+      font-size: var(--subtitle);
+      color: var(--pink);
+      font-weight: 600;
+      margin-bottom: 7px;
+      margin-top: 23px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+    }
+    .section-title .bi {
+      color: var(--pink);
+      margin-right: 10px;
+    }
+    ul, ol {
+      font-size: var(--body-font);
+      margin: 7px 0 10px 20px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0 10px 0;
+      font-size: var(--sm-font);
+      background: #f7fbfd;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px 5px;
+      text-align: center;
+    }
+    th {
+      background: #e5f1fd;
+      font-weight: 700;
+      color: var(--blue);
+      font-size: var(--sm-font);
+    }
+    tr:nth-child(even) td {
+      background: #f0f6fa;
+    }
+    .info-list b {
+      color: var(--blue);
+      font-weight: 600;
+      margin-right: 5px;
+      font-size: var(--sm-font);
+    }
+    .label-cyan {background:#d6f6ff;color:#20b8d8;}
+    .label-pink {background:#ffe1ef;color:var(--pink);}
+    .label-yellow {background:#fff6de;color:var(--yellow);}
+    .label-green {background:#d7fbe8;color:var(--green);}
+    /* 页面切换动画 */
+    .page-section {
+      display: none;
+      animation: fadein 0.8s cubic-bezier(.42,0,.58,1);
+    }
+    .page-section.active {
+      display: block;
+    }
+    /* 底部和回顶 */
+    .footer {
+      text-align: center;
+      font-size: var(--sm-font);
+      color: #aaa;
+      margin: 20px 0 5px 0;
+    }
+    .backtop {
+      position: fixed;
+      bottom: 29px;
+      right: 28px;
+      background: var(--cyan);
+      color: #fff;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 22px 0 rgba(5,192,208,0.18);
+      z-index: 90;
+      font-size: 2.6em;
+      transition: background .23s;
+      display: none;
+    }
+    .backtop:hover {
+      background: var(--pink);
+    }
+    /* 手机端优化 */
+    @media (max-width: 900px) {
+      .page-card {padding: 22px 7vw;}
+      .navbar {padding: 0 2vw;}
+    }
+    @media (max-width: 600px) {
+      .navbar-title {font-size: 1.03em;}
+      .nav-btn {font-size: 1em;padding: 9px 9px;}
+      .page-card {padding: 8vw 3vw;}
+      .page-title {font-size: 1.1em;}
+      .section-title {font-size: 1em;}
+    }
+    @media (max-width: 440px) {
+      .navbar-title {font-size: 0.91em;}
+      .nav-btn {padding: 8px 4px;}
+      .page-card {padding: 5vw 2vw;}
+    }
+  </style>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
-    <div class="navbar">
-        <h1>
-            <i class="bi bi-heart-pulse"></i>
-            患者康复信息系统
-        </h1>
-        <div>
-            <span class="chip"><i class="bi bi-shield-check"></i> 电子病历</span>
-        </div>
+  <!-- 导航栏 -->
+  <div class="navbar">
+    <div class="navbar-title">
+      <i class="bi bi-hospital"></i>
+      康复信息互动系统
     </div>
-
-    <div class="container">
-        <div class="note">
-            <i class="bi bi-file-earmark-text"></i>
-            数据来源：患者信息.txt
-        </div>
-
-        <!-- 一、主观资料（S） -->
-        <div class="card">
-            <details open>
-                <summary><i class="bi bi-person-lines-fill"></i> 一、主观资料（S）</summary>
-                <div class="card-content">
-                    <ul>
-                        <li><b>性别：</b>女性，74岁，退休在家</li>
-                        <li><b>主诉：</b>髋关节置换近一个月恢复良好，伤口无疼痛，可独立行走，活动久后会有酸痛感。</li>
-                        <li><b>现病史：</b>
-                            <ul>
-                                <li>1个月前因“右侧股骨颈骨折”行右侧全髋关节置换手术（后外侧入路），术后恢复顺利，切口愈合良好，无感染或渗液。</li>
-                                <li>双下肢无麻木无肿胀，无夜间痛和晨僵，右膝久站或康复训练后酸痛。</li>
-                            </ul>
-                        </li>
-                        <li><b>治疗史：</b>
-                            <ul>
-                                <li>术后前三天，进行床上康复训练（踝泵、直腿抬高、股四等长收缩）。</li>
-                                <li>术后三天下床，助行器辅助下步行。目前练习单脚站，自主步行，站立位髋内收外展，膝关节屈伸。</li>
-                                <li>右膝照红外灯，右侧股四头肌低频电。</li>
-                            </ul>
-                        </li>
-                        <li><b>既往史：</b>
-                            <ul>
-                                <li>骨质疏松症10余年，因腰椎间盘突出行腰椎间盘置换手术，左手尺骨鹰嘴骨折钢钉固定。</li>
-                                <li>否认高血压、糖尿病等慢病史。否认长期大量吸烟喝酒史。</li>
-                            </ul>
-                        </li>
-                        <li><b>家族史和个人史：</b>母亲患有骨质疏松。目前与子女共居，女儿陪同照顾。</li>
-                        <li><b>用药史：</b>口服阿仑膦酸钠+钙剂。</li>
-                        <li><b>过敏史：</b>否认药物过敏、食物过敏史。</li>
-                    </ul>
-                </div>
-            </details>
-        </div>
-
-        <!-- 二、客观资料（O） -->
-        <div class="card">
-            <details>
-                <summary><i class="bi bi-activity"></i> 二、客观资料（O）</summary>
-                <div class="card-content">
-                    <div class="subsection">
-                        <b>1. 生命体征</b>
-                        <span class="tag"><i class="bi bi-heart-pulse-fill"></i> HR: 86次/分</span>
-                        <span class="tag"><i class="bi bi-thermometer-half"></i> T: 36.7℃</span>
-                    </div>
-                    <div class="subsection">
-                        <b>2. 体格检查</b>
-                        <details>
-                            <summary><i class="bi bi-scissors"></i> 手术切口</summary>
-                            <div style="margin-top:5px;">右侧髋部后外侧切口愈合佳，无红肿、压痛及渗出。</div>
-                        </details>
-                        <details>
-                            <summary><i class="bi bi-joystick"></i> 关节主动活动度</summary>
-                            <table>
-                                <tr>
-                                    <th>项目</th><th>患侧右髋</th><th>健侧左髋</th><th>参考正常值</th>
-                                </tr>
-                                <tr>
-                                    <td>屈髋</td><td>0–90°</td><td>0–113°</td><td>120°</td>
-                                </tr>
-                                <tr>
-                                    <td>伸髋</td><td>0–11°</td><td>0–18°</td><td>20°</td>
-                                </tr>
-                                <tr>
-                                    <td>外展</td><td>0–32°</td><td>0–40°</td><td>40°</td>
-                                </tr>
-                                <tr>
-                                    <td>内收</td><td>禁忌</td><td>0–23°</td><td>25°</td>
-                                </tr>
-                                <tr>
-                                    <td>内旋</td><td>禁忌</td><td>0–21°</td><td>30°</td>
-                                </tr>
-                                <tr>
-                                    <td>外旋</td><td>0–12°</td><td>0–37°</td><td>45°</td>
-                                </tr>
-                            </table>
-                        </details>
-                        <details>
-                            <summary><i class="bi bi-bar-chart-line-fill"></i> 肌力</summary>
-                            <table>
-                                <tr>
-                                    <th>肌群</th><th>右侧肌力</th><th>左侧肌力</th><th>备注</th>
-                                </tr>
-                                <tr>
-                                    <td>屈髋</td><td>4级</td><td>4级</td><td>患侧稍弱</td>
-                                </tr>
-                                <tr>
-                                    <td>伸髋</td><td>4级</td><td>4级</td><td>患侧不足，因术后限制</td>
-                                </tr>
-                                <tr>
-                                    <td>外展</td><td>3级</td><td>4级</td><td>术后剥离相关肌群</td>
-                                </tr>
-                                <tr>
-                                    <td>内收</td><td>4级</td><td>4级</td><td>近正常</td>
-                                </tr>
-                                <tr>
-                                    <td>内旋</td><td>3级</td><td>4级</td><td>患侧弱</td>
-                                </tr>
-                                <tr>
-                                    <td>外旋</td><td>3级</td><td>3级</td><td>均弱</td>
-                                </tr>
-                                <tr>
-                                    <td>屈膝</td><td>4级</td><td>4级</td><td>正常</td>
-                                </tr>
-                                <tr>
-                                    <td>伸膝</td><td>4级</td><td>4级</td><td>患侧无法持续，有不适</td>
-                                </tr>
-                            </table>
-                        </details>
-                        <details>
-                            <summary><i class="bi bi-person-walking"></i> 姿态与步态</summary>
-                            <ul>
-                                <li>姿态：驼背、头前倾、膝过伸、骨盆前倾。</li>
-                                <li>步态：助行器辅助行走，步幅小，患侧单支撑相时间稍短，足尖着地。</li>
-                            </ul>
-                        </details>
-                        <details>
-                            <summary><i class="bi bi-shuffle"></i> 平衡</summary>
-                            <ul>
-                                <li>左侧睁眼单脚站立 &lt; 1秒，右侧拒做。</li>
-                            </ul>
-                        </details>
-                    </div>
-                </div>
-            </details>
-        </div>
-
-        <!-- 三、评估（A） -->
-        <div class="card">
-            <details>
-                <summary><i class="bi bi-clipboard2-check"></i> 三、评估（A）</summary>
-                <div class="card-content">
-                    <ul>
-                        <li><b>诊断：</b>右侧全髋关节置换术后恢复期（后外侧入路）、骨质疏松。</li>
-                        <li><b>康复评估：</b>功能恢复良好，但：
-                            <ul>
-                                <li>患侧髋外展/内旋肌力明显较弱。</li>
-                                <li>患侧膝关节肌群耐力差。</li>
-                                <li>双下肢平衡能力差。</li>
-                            </ul>
-                        </li>
-                        <li><b>风险因素：</b>骨折风险高，康复期间注意防脱位及日常活动禁忌。</li>
-                    </ul>
-                </div>
-            </details>
-        </div>
-
-        <!-- 四、康复方案（P） -->
-        <div class="card">
-            <details>
-                <summary><i class="bi bi-journal-medical"></i> 四、康复方案（P）</summary>
-                <div class="card-content">
-                    <h3 style="margin-top:0;">阶段一：4–8周（恢复期）</h3>
-                    <ol>
-                        <li><b>目标：</b>
-                            <ul>
-                                <li>屈髋、内收活动度逐步恢复（6周后逐渐放宽限制）。</li>
-                                <li>提升髋外展/外旋肌力。</li>
-                                <li>步态恢复至术后正常。</li>
-                            </ul>
-                        </li>
-                        <li><b>物理因子：</b>
-                            <ul>
-                                <li>低频电：右侧股四头肌，20Hz，15分钟/次，1次/日。</li>
-                                <li>红外灯：右膝局部，20分钟/次，1次/日。</li>
-                            </ul>
-                        </li>
-                        <li><b>手法治疗：</b>
-                            <ul>
-                                <li>软组织松解：髋外展/内外旋肌群。</li>
-                                <li>关节松动术：髋关节I–II级松动（仰卧位前后滑动）。</li>
-                                <li>瘢痕管理：术后6周后切口瘢痕松动。</li>
-                            </ul>
-                        </li>
-                        <li><b>肌力训练：</b>
-                            <ul>
-                                <li>外展肌群：侧卧位髋外展，自重到弹力带，10次×3组，2次/日。</li>
-                                <li>臀肌激活：臀桥，10次×3组。</li>
-                                <li>股四头肌：坐位屈膝伸膝，自重到沙袋0.5–1kg，15次×3组。</li>
-                            </ul>
-                        </li>
-                        <li><b>主动活动：</b>
-                            <ul>
-                                <li>仰卧位自主屈髋：6周前0–90°，6周后视恢复逐步放宽。</li>
-                                <li>俯卧位屈膝自主内外旋：6周后开始。</li>
-                            </ul>
-                        </li>
-                        <li><b>步态训练：</b>助行器→单拐过渡，强调足跟–足尖着地模式。</li>
-                        <li><b>注意事项：</b>防脱位，严格遵守活动度限制。</li>
-                    </ol>
-                    <hr style="border-top: 1px dashed #b0e0e6; margin: 20px 0;">
-                    <h3>阶段二：8周–3个月（功能性强化）</h3>
-                    <ol>
-                        <li><b>目标：</b>
-                            <ul>
-                                <li>日常生活能力恢复（上下台阶等）。</li>
-                                <li>单腿站立、起立-行走计时等达到同龄组正常。</li>
-                            </ul>
-                        </li>
-                        <li><b>物理因子：</b>
-                            <ul>
-                                <li>超声治疗：右髋关节周围软组织，1.0W/cm²，5分钟。</li>
-                                <li>全身振动训练：激活肌肉，低频振动促进骨重塑。</li>
-                            </ul>
-                        </li>
-                        <li><b>手法治疗：</b>
-                            <ul>
-                                <li>关节松动：髋关节III–IV级松动，结合MET改善终末活动度。</li>
-                            </ul>
-                        </li>
-                        <li><b>功能性训练：</b>
-                            <ul>
-                                <li>上下台阶：10cm台阶，10次×3组。</li>
-                                <li>弓步训练：扶墙小幅前弓步，8次×3组。</li>
-                                <li>靠墙静蹲：髋膝屈90°。</li>
-                                <li>单腿站立：睁眼→闭眼，30秒×5组。</li>
-                            </ul>
-                        </li>
-                        <li><b>日常生活模拟：</b>
-                            <ul>
-                                <li>坐-站转移（无扶手）。</li>
-                                <li>模拟穿衣、拾物（避免弯腰）。</li>
-                            </ul>
-                        </li>
-                        <li><b>康复宣教：</b>
-                            <ul>
-                                <li>避免急停、急转或冲击性动作。</li>
-                                <li>防跌倒措施（防滑垫、扶手等）。</li>
-                                <li>布置家庭作业，训练后进行肌肉松解。</li>
-                            </ul>
-                        </li>
-                    </ol>
-                </div>
-            </details>
-        </div>
-
-        <!-- 操作区，可根据实际需求扩展 -->
-        <div class="card" style="text-align:center;padding:0;">
-            <div class="card-content" style="padding-top:18px;">
-                <button class="action-btn" onclick="window.print()">
-                    <i class="bi bi-printer"></i> 打印本页
-                </button>
-                <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-                    <i class="bi bi-arrow-up-circle"></i> 回到顶部
-                </button>
-            </div>
-        </div>
+    <div class="nav-tabs" id="navTabs">
+      <button class="nav-btn active" data-page="s1"><i class="bi bi-person-lines-fill"></i>主观资料</button>
+      <button class="nav-btn" data-page="s2"><i class="bi bi-activity"></i>客观资料</button>
+      <button class="nav-btn" data-page="s3"><i class="bi bi-clipboard2-check"></i>评估</button>
+      <button class="nav-btn" data-page="s4"><i class="bi bi-journal-medical"></i>康复方案</button>
     </div>
+  </div>
 
-    <div class="backtop" id="backtopBtn" title="回到顶部">
-        <i class="bi bi-chevron-up"></i>
+  <!-- 主观资料 -->
+  <div class="page-section active" id="page-s1">
+    <div class="page-header s1"></div>
+    <div class="page-card">
+      <div class="page-title"><i class="bi bi-person-lines-fill"></i>主观资料（S）</div>
+      <ul class="info-list">
+        <li><b>性别：</b>女性，74岁，退休在家 <span class="tag label-cyan">年龄</span></li>
+        <li><b>主诉：</b>髋关节置换近一个月恢复良好，伤口无疼痛，可独立行走，活动久后会有酸痛感。</li>
+        <li><b>现病史：</b>
+          <ul>
+            <li>1个月前因“右侧股骨颈骨折”行右侧全髋关节置换手术（后外侧入路），术后恢复顺利，切口愈合良好，无感染或渗液。</li>
+            <li>双下肢无麻木无肿胀，无夜间痛和晨僵，右膝久站或康复训练后酸痛。</li>
+          </ul>
+        </li>
+        <li><b>治疗史：</b>
+          <ul>
+            <li>术后前三天，床上康复训练（踝泵、直腿抬高、股四等长收缩）。</li>
+            <li>术后三天起下床，助行器辅助步行，练习单脚站、自主步行、站立位髋内收外展、膝关节屈伸。</li>
+            <li>右膝红外灯照射，右侧股四头肌低频电刺激。</li>
+          </ul>
+        </li>
+        <li><b>既往史：</b>
+          <ul>
+            <li>骨质疏松症10余年，腰椎间盘置换术史，左手尺骨鹰嘴骨折钢钉固定。</li>
+            <li>无高血压、糖尿病等慢病史，无长期吸烟饮酒。</li>
+          </ul>
+        </li>
+        <li><b>家族/个人史：</b>母亲骨质疏松，与子女同住，女儿陪护。</li>
+        <li><b>用药史：</b>阿仑膦酸钠、钙剂。</li>
+        <li><b>过敏史：</b>无药物或食物过敏。</li>
+      </ul>
     </div>
+  </div>
 
-    <div class="footer">
-        &copy; 2025 医疗康复信息系统 | <i class="bi bi-envelope-at"></i> 联系我们：health@hospital.cn
+  <!-- 客观资料 -->
+  <div class="page-section" id="page-s2">
+    <div class="page-header s2"></div>
+    <div class="page-card">
+      <div class="page-title"><i class="bi bi-activity"></i>客观资料（O）</div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-thermometer-half"></i>生命体征</div>
+        <ul>
+          <li>心率（HR）：<b>86次/分</b></li>
+          <li>体温（T）：<b>36.7℃</b></li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-scissors"></i>手术切口</div>
+        <ul>
+          <li>右侧髋部后外侧切口愈合佳，无红肿、压痛及渗出。</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-joystick"></i>关节主动活动度</div>
+        <table>
+          <tr>
+            <th>项目</th><th>患侧右髋</th><th>健侧左髋</th><th>参考正常</th>
+          </tr>
+          <tr>
+            <td>屈髋</td><td>0–90°</td><td>0–113°</td><td>120°</td>
+          </tr>
+          <tr>
+            <td>伸髋</td><td>0–11°</td><td>0–18°</td><td>20°</td>
+          </tr>
+          <tr>
+            <td>外展</td><td>0–32°</td><td>0–40°</td><td>40°</td>
+          </tr>
+          <tr>
+            <td>内收</td><td>禁忌</td><td>0–23°</td><td>25°</td>
+          </tr>
+          <tr>
+            <td>内旋</td><td>禁忌</td><td>0–21°</td><td>30°</td>
+          </tr>
+          <tr>
+            <td>外旋</td><td>0–12°</td><td>0–37°</td><td>45°</td>
+          </tr>
+        </table>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-bar-chart-line-fill"></i>肌力评估</div>
+        <table>
+          <tr>
+            <th>肌群</th><th>右侧</th><th>左侧</th><th>备注</th>
+          </tr>
+          <tr>
+            <td>屈髋</td><td>4级</td><td>4级</td><td>患侧稍弱</td>
+          </tr>
+          <tr>
+            <td>伸髋</td><td>4级</td><td>4级</td><td>术后限制</td>
+          </tr>
+          <tr>
+            <td>外展</td><td>3级</td><td>4级</td><td>术后相关肌群</td>
+          </tr>
+          <tr>
+            <td>内收</td><td>4级</td><td>4级</td><td>近正常</td>
+          </tr>
+          <tr>
+            <td>内旋</td><td>3级</td><td>4级</td><td>患侧弱</td>
+          </tr>
+          <tr>
+            <td>外旋</td><td>3级</td><td>3级</td><td>均弱</td>
+          </tr>
+          <tr>
+            <td>屈膝</td><td>4级</td><td>4级</td><td>正常</td>
+          </tr>
+          <tr>
+            <td>伸膝</td><td>4级</td><td>4级</td><td>患侧不适</td>
+          </tr>
+        </table>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-person-walking"></i>姿态与步态</div>
+        <ul>
+          <li>驼背、头前倾、膝过伸、骨盆前倾。</li>
+          <li>助行器辅助步行，步幅小，患侧支撑时间短，足尖着地。</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-shuffle"></i>平衡能力</div>
+        <ul>
+          <li>左侧睁眼单脚站立 &lt; 1秒，右侧未测。</li>
+        </ul>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // 回到顶部按钮显隐
-        window.onscroll = function() {
-            const btn = document.getElementById("backtopBtn");
-            if(document.documentElement.scrollTop > 260) btn.style.display = "flex";
-            else btn.style.display = "none";
-        };
-        document.getElementById("backtopBtn").onclick = function(){
-            window.scrollTo({top:0,behavior:'smooth'});
-        }
-    </script>
+  <!-- 评估 -->
+  <div class="page-section" id="page-s3">
+    <div class="page-header s3"></div>
+    <div class="page-card">
+      <div class="page-title"><i class="bi bi-clipboard2-check"></i>评估（A）</div>
+      <ul class="info-list">
+        <li><b>诊断：</b>
+          <span class="tag label-green">右侧全髋关节置换术后</span>
+          <span class="tag label-pink">骨质疏松</span>
+        </li>
+        <li><b>康复评估：</b>
+          <ul>
+            <li>功能恢复良好，但患侧髋外展/内旋肌力较弱。</li>
+            <li>患侧膝关节耐力差。</li>
+            <li>双下肢平衡能力差。</li>
+          </ul>
+        </li>
+        <li><b>风险因素：</b>
+          <span class="tag label-yellow"><i class="bi bi-exclamation-circle"></i>骨折风险高</span>
+          康复期间注意防脱位及日常禁忌。
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 康复方案 -->
+  <div class="page-section" id="page-s4">
+    <div class="page-header s4"></div>
+    <div class="page-card">
+      <div class="page-title"><i class="bi bi-journal-medical"></i>康复方案（P）</div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-hourglass-split"></i>阶段一：4–8周（恢复期）</div>
+        <ol>
+          <li><b>目标：</b>
+            <ul>
+              <li>屈髋、内收活动度逐步恢复（6周后放宽限制）。</li>
+              <li>提升髋外展/外旋肌力。</li>
+              <li>步态恢复至术后正常。</li>
+            </ul>
+          </li>
+          <li><b>物理因子：</b>
+            <ul>
+              <li>低频电：右股四头肌，20Hz，15分钟/次，1次/日。</li>
+              <li>红外灯：右膝局部，20分钟/次，1次/日。</li>
+            </ul>
+          </li>
+          <li><b>手法治疗：</b>
+            <ul>
+              <li>软组织松解：髋外展/内外旋肌群。</li>
+              <li>关节松动术：髋I–II级松动（仰卧前后滑动）。</li>
+              <li>瘢痕管理：术后6周后切口瘢痕松动。</li>
+            </ul>
+          </li>
+          <li><b>肌力训练：</b>
+            <ul>
+              <li>外展肌群：侧卧外展，自重到弹力带，10次×3组，2次/日。</li>
+              <li>臀桥训练。</li>
+              <li>股四头肌训练。</li>
+            </ul>
+          </li>
+          <li><b>步态训练：</b>助行器→单拐，足跟–足尖着地。</li>
+          <li><b>注意事项：</b>防脱位，遵守活动度限制。</li>
+        </ol>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="bi bi-trophy"></i>阶段二：8周–3个月（功能性强化）</div>
+        <ol>
+          <li><b>目标：</b>
+            <ul>
+              <li>日常能力恢复（上下台阶等）。</li>
+              <li>单腿站、起立-行走等达到同龄正常。</li>
+            </ul>
+          </li>
+          <li><b>物理因子：</b>
+            <ul>
+              <li>超声治疗、全身振动训练。</li>
+            </ul>
+          </li>
+          <li><b>功能训练：</b>
+            <ul>
+              <li>上下台阶、弓步、靠墙静蹲、单腿站立。</li>
+            </ul>
+          </li>
+          <li><b>日常模拟：</b>坐-站转移，穿衣、拾物（注意腰椎保护）。</li>
+          <li><b>康复宣教：</b>防跌倒、急转弯、布置家庭作业。</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- 回到顶部 -->
+  <div class="backtop" id="backtopBtn" title="回到顶部">
+    <i class="bi bi-chevron-up"></i>
+  </div>
+  <!-- 页脚 -->
+  <div class="footer">
+    &copy; 2025 患者康复信息系统 | <i class="bi bi-envelope-at"></i> health@hospital.cn
+  </div>
+  <script>
+    // 切换页面
+    const btns = document.querySelectorAll('.nav-btn');
+    const pages = {
+      s1: document.getElementById('page-s1'),
+      s2: document.getElementById('page-s2'),
+      s3: document.getElementById('page-s3'),
+      s4: document.getElementById('page-s4'),
+    };
+    btns.forEach(btn => {
+      btn.onclick = function() {
+        btns.forEach(b=>b.classList.remove('active'));
+        this.classList.add('active');
+        const page = this.getAttribute('data-page');
+        Object.keys(pages).forEach(k=>pages[k].classList.remove('active'));
+        pages[page].classList.add('active');
+        window.scrollTo({top:0,behavior:'smooth'});
+      }
+    });
+
+    // 回到顶部按钮显隐
+    window.onscroll = function() {
+      const btn = document.getElementById("backtopBtn");
+      if(document.documentElement.scrollTop > 200) btn.style.display = "flex";
+      else btn.style.display = "none";
+    };
+    document.getElementById("backtopBtn").onclick = function(){
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+  </script>
 </body>
 </html>
